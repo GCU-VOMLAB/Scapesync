@@ -99,6 +99,10 @@
             scroll-behavior: smooth;
         }
 
+        :root {
+            --nav-h: 80px;
+        }
+
         body {
             min-height: 100vh;
             background-color: #0c1324;
@@ -239,6 +243,21 @@
             --tile-rx: 0deg;
             --tile-ry: 0deg;
             perspective: 1200px;
+        }
+
+        .section-intro {
+            min-height: calc(86svh - var(--nav-h));
+            display: flex;
+            align-items: center;
+        }
+
+        .section-intro .section-card {
+            width: min(860px, 100%);
+        }
+
+        .section-intro .section-card h2 {
+            font-size: clamp(40px, 6vw, 86px);
+            line-height: 0.98;
         }
 
         .section-card,
@@ -427,6 +446,221 @@
             overflow-wrap: anywhere;
         }
 
+        .mosaic-story {
+            position: relative;
+            min-height: var(--story-height, 340svh);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+            background: transparent;
+        }
+
+        .mosaic-stage {
+            position: sticky;
+            top: var(--nav-h);
+            min-height: calc(100svh - var(--nav-h));
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            perspective: 1600px;
+        }
+
+        .mosaic-stage::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 26% 42%, rgba(0, 240, 255, 0.12), transparent 32%),
+                radial-gradient(circle at 74% 58%, rgba(208, 188, 255, 0.09), transparent 34%),
+                linear-gradient(180deg, rgba(12, 19, 36, 0.08), rgba(12, 19, 36, 0.46));
+            pointer-events: none;
+        }
+
+        .mosaic-deck {
+            position: relative;
+            z-index: 2;
+            width: min(1320px, calc(100% - clamp(40px, 10vw, 128px)));
+            height: min(72vh, 720px);
+            margin-inline: auto;
+        }
+
+        .mosaic-story-card {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            grid-template-columns: minmax(280px, 0.82fr) minmax(420px, 1.38fr);
+            gap: clamp(28px, 6vw, 92px);
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transform-style: preserve-3d;
+            will-change: opacity, transform, filter;
+        }
+
+        .mosaic-story-card::before {
+            display: none;
+        }
+
+        .mosaic-copy-panel {
+            position: relative;
+            overflow: hidden;
+            padding: clamp(28px, 4vw, 54px);
+            background: rgba(15, 23, 42, 0.78);
+            border: 1px solid rgba(219, 252, 255, 0.2);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.24);
+        }
+
+        .mosaic-copy-panel::after {
+            content: '';
+            position: absolute;
+            inset: -18%;
+            pointer-events: none;
+            opacity: var(--copy-grain, 0);
+            background-image:
+                radial-gradient(circle, rgba(0, 240, 255, 0.42) 0 1px, transparent 1.8px),
+                radial-gradient(circle, rgba(219, 252, 255, 0.24) 0 1px, transparent 1.7px);
+            background-position: 0 0, 5px 7px;
+            background-size: 13px 13px, 17px 17px;
+            mix-blend-mode: screen;
+            transform: translate3d(var(--copy-grain-x, 0), 0, 0);
+        }
+
+        .mosaic-copy-panel > * {
+            position: relative;
+            z-index: 2;
+            opacity: var(--copy-solid, 1);
+            transform: translate3d(var(--copy-x, 0), 0, 0);
+            filter: blur(var(--copy-blur, 0));
+        }
+
+        .mosaic-kicker {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 16px;
+            letter-spacing: 0.14em;
+            color: #d3fff6;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .mosaic-copy-panel h3 {
+            font-family: 'Geist', sans-serif;
+            font-size: clamp(34px, 4.6vw, 70px);
+            line-height: 0.98;
+            color: #dbfcff;
+            margin-bottom: 22px;
+        }
+
+        .mosaic-copy-panel p {
+            color: #b9cacb;
+            font-size: clamp(14px, 1.25vw, 18px);
+            line-height: 1.65;
+        }
+
+        .mosaic-media {
+            --image-opacity: 0.18;
+            --image-scale: 1.08;
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            overflow: hidden;
+            background: rgba(0, 240, 255, 0.06);
+            border: 1px solid rgba(219, 252, 255, 0.22);
+            box-shadow: 0 32px 100px rgba(0, 0, 0, 0.34);
+            transform-style: preserve-3d;
+        }
+
+        .mosaic-media > img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: var(--image-opacity);
+            transform: scale(var(--image-scale));
+            filter: saturate(0.72) contrast(1.1) brightness(0.82) blur(2px);
+            mix-blend-mode: luminosity;
+            transition:
+                opacity 140ms linear,
+                transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+                filter 180ms ease;
+        }
+
+        .mosaic-pieces {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: repeat(var(--mosaic-cols, 10), minmax(0, 1fr));
+            grid-template-rows: repeat(var(--mosaic-rows, 8), minmax(0, 1fr));
+            pointer-events: none;
+            transform-style: preserve-3d;
+        }
+
+        .mosaic-piece {
+            min-width: 0;
+            min-height: 0;
+            background-image: var(--piece-image);
+            background-size: var(--piece-size);
+            background-position: var(--piece-position);
+            opacity: var(--piece-opacity, 0);
+            transform:
+                translate3d(var(--piece-x, 0), var(--piece-y, 0), var(--piece-z, 0))
+                scale(var(--piece-scale, 1))
+                rotateZ(var(--piece-rotate, 0));
+            filter: brightness(var(--piece-brightness, 0.72)) saturate(var(--piece-saturation, 0.7));
+            box-shadow: inset 0 0 0 1px rgba(219, 252, 255, var(--piece-line, 0.05));
+            transition:
+                opacity 120ms linear,
+                transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+                filter 160ms ease;
+            will-change: opacity, transform, filter;
+        }
+
+        .mosaic-status {
+            position: absolute;
+            z-index: 3;
+            left: 50%;
+            bottom: clamp(18px, 3.4vh, 42px);
+            transform: translateX(-50%);
+            width: min(1320px, calc(100% - clamp(40px, 10vw, 128px)));
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            color: rgba(219, 252, 255, 0.7);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .mosaic-num {
+            min-width: 60px;
+            color: #00f0ff;
+            font-size: 12px;
+            letter-spacing: 0.16em;
+        }
+
+        .mosaic-rail {
+            position: relative;
+            flex: 1;
+            height: 2px;
+            overflow: hidden;
+            background: rgba(219, 252, 255, 0.16);
+        }
+
+        .mosaic-fill {
+            position: absolute;
+            inset: 0 auto 0 0;
+            width: 0%;
+            background: linear-gradient(90deg, #00f0ff, #d0bcff);
+            box-shadow: 0 0 18px rgba(0, 240, 255, 0.48);
+        }
+
+        .mosaic-label {
+            min-width: 178px;
+            text-align: right;
+            font-size: 11px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
         @media (max-width: 767px) {
             #ambient-tile-field {
                 gap: 1px;
@@ -434,6 +668,33 @@
 
             .section-tile-array {
                 min-height: 112px;
+            }
+
+            .section-intro {
+                min-height: auto;
+            }
+
+            .mosaic-deck {
+                width: calc(100% - 40px);
+                height: min(78vh, 760px);
+            }
+
+            .mosaic-story-card {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                align-content: center;
+            }
+
+            .mosaic-media {
+                order: -1;
+            }
+
+            .mosaic-copy-panel {
+                padding: 24px;
+            }
+
+            .mosaic-label {
+                display: none;
             }
         }
 
@@ -450,7 +711,10 @@
             .section-tile,
             .data-thumb,
             .data-thumb::after,
-            .data-thumb img {
+            .data-thumb img,
+            .mosaic-story-card,
+            .mosaic-piece,
+            .mosaic-media > img {
                 animation: none !important;
                 transition-duration: 0.01ms !important;
             }
@@ -459,7 +723,9 @@
             .glass-panel,
             .section-card,
             .data-card,
-            .section-tile {
+            .section-tile,
+            .mosaic-story-card,
+            .mosaic-piece {
                 opacity: 1 !important;
                 transform: none !important;
                 filter: none !important;
@@ -468,6 +734,33 @@
             .data-thumb::after {
                 opacity: 0.22 !important;
                 transform: none !important;
+            }
+
+            .mosaic-story {
+                min-height: auto !important;
+                padding: 40px 0;
+            }
+
+            .mosaic-stage {
+                position: relative;
+                top: auto;
+                min-height: auto;
+                overflow: visible;
+            }
+
+            .mosaic-deck {
+                height: auto;
+                display: grid;
+                gap: 24px;
+            }
+
+            .mosaic-story-card {
+                position: relative;
+                pointer-events: auto;
+            }
+
+            .mosaic-status {
+                display: none;
             }
         }
 
@@ -531,107 +824,149 @@
 </div>
 </section>
 
-<section class="sync-section mosaic-target relative py-24 md:py-32 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto overflow-hidden border-b border-primary/20" id="about">
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-stretch">
-<article class="section-card scroll-reveal lg:col-span-5 p-8 md:p-10">
+<section class="sync-section section-intro mosaic-target relative py-24 md:py-32 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto overflow-hidden border-b border-primary/20" id="about">
+<article class="section-card p-8 md:p-12">
 <p class="font-data-label text-data-label text-tertiary mb-4">ABOUT / SHARED TERRAIN</p>
-<h2 class="font-headline-lg text-headline-lg text-primary mb-6 font-['Geist'] uppercase">
+<h2 class="font-headline-lg text-primary mb-6 font-['Geist'] uppercase">
                     Fragments become a landscape.
                 </h2>
-<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed max-w-3xl">
                     SCAPESYNC treats each image, sensor point, and visit as a tile in a larger field. The site reveals how separate inputs synchronize into one collective spatial memory.
                 </p>
 <div class="section-tile-array mt-8" data-tile-array aria-hidden="true"></div>
 </article>
-<div class="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-gutter">
-<article class="data-card scroll-reveal" style="transition-delay: 100ms;">
-<div class="data-thumb"><img alt="Visitor snapshot data tile" src="docs/resource/scapesync_test.png"/></div>
-<div class="p-6">
-<p class="font-data-value text-data-value text-tertiary mb-3">ABOUT_DATA_01</p>
-<h3 class="font-headline-lg text-[22px] leading-7 text-primary font-['Geist'] mb-3">Visitor Snapshot</h3>
-<p class="font-body-md text-body-md text-on-surface-variant mb-5">A captured view becomes one addressable tile in the collective mosaic.</p>
-<div class="metric-strip font-data-value text-data-value text-primary"><span>SOURCE PHOTO</span><span>SYNC 94%</span></div>
+</section>
+
+<section class="mosaic-story" data-mosaic-story data-section="about" aria-label="About content sequence">
+<div class="mosaic-stage">
+<div class="mosaic-deck">
+<article class="mosaic-story-card" data-i="0">
+<div class="mosaic-copy-panel">
+<p class="mosaic-kicker">ABOUT_DATA_01</p>
+<h3>Visitor Snapshot</h3>
+<p>A captured view becomes one addressable tile in the collective mosaic.</p>
+<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>SOURCE PHOTO</span><span>SYNC 94%</span></div>
+</div>
+<div class="mosaic-media">
+<img alt="Visitor snapshot data tile" src="docs/resource/scapesync_test.png"/>
+<div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
-<article class="data-card scroll-reveal" style="transition-delay: 180ms;">
-<div class="data-thumb"><img alt="Telemetry data tile" src="docs/resource/scapesync_test.png"/></div>
-<div class="p-6">
-<p class="font-data-value text-data-value text-secondary mb-3">ABOUT_DATA_02</p>
-<h3 class="font-headline-lg text-[22px] leading-7 text-primary font-['Geist'] mb-3">Telemetry Slice</h3>
-<p class="font-body-md text-body-md text-on-surface-variant mb-5">Environmental readings modulate the same visual field without breaking the grid.</p>
-<div class="metric-strip font-data-value text-data-value text-primary"><span>HUMIDITY 62%</span><span>WIND 4.8M/S</span></div>
+<article class="mosaic-story-card" data-i="1">
+<div class="mosaic-copy-panel">
+<p class="mosaic-kicker text-secondary">ABOUT_DATA_02</p>
+<h3>Telemetry Slice</h3>
+<p>Environmental readings modulate the same visual field without breaking the grid.</p>
+<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>HUMIDITY 62%</span><span>WIND 4.8M/S</span></div>
+</div>
+<div class="mosaic-media">
+<img alt="Telemetry data tile" src="docs/resource/scapesync_test.png"/>
+<div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
+</div>
+<div class="mosaic-status" aria-hidden="true">
+<div class="mosaic-num">01/02</div>
+<div class="mosaic-rail"><div class="mosaic-fill"></div></div>
+<div class="mosaic-label">Scroll to assemble</div>
 </div>
 </div>
 </section>
 
-<section class="sync-section mosaic-target relative py-24 md:py-32 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto overflow-hidden border-b border-primary/20" id="design">
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-stretch">
-<article class="section-card scroll-reveal lg:col-span-5 p-8 md:p-10">
+<section class="sync-section section-intro mosaic-target relative py-24 md:py-32 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto overflow-hidden border-b border-primary/20" id="design">
+<article class="section-card p-8 md:p-12">
 <p class="font-data-label text-data-label text-secondary mb-4">DESIGN / MODULAR IMAGE FIELD</p>
-<h2 class="font-headline-lg text-headline-lg text-primary mb-6 font-['Geist'] uppercase">
+<h2 class="font-headline-lg text-primary mb-6 font-['Geist'] uppercase">
                     A system of responsive tiles.
                 </h2>
-<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed max-w-3xl">
                     The visual language is built from fixed tiles, disciplined spacing, and layered depth. Hover states expose the construction logic while keeping the mosaic intact.
                 </p>
 <div class="section-tile-array mt-8" data-tile-array aria-hidden="true"></div>
 </article>
-<div class="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-gutter">
-<article class="data-card scroll-reveal" style="transition-delay: 100ms;">
-<div class="data-thumb"><img alt="Tile atlas data tile" src="docs/resource/scapesync_test.png"/></div>
-<div class="p-6">
-<p class="font-data-value text-data-value text-tertiary mb-3">DESIGN_DATA_01</p>
-<h3 class="font-headline-lg text-[22px] leading-7 text-primary font-['Geist'] mb-3">Tile Atlas</h3>
-<p class="font-body-md text-body-md text-on-surface-variant mb-5">Repeated image modules create a readable terrain from many local details.</p>
-<div class="metric-strip font-data-value text-data-value text-primary"><span>GRID 6X5</span><span>DEPTH ON</span></div>
+</section>
+
+<section class="mosaic-story" data-mosaic-story data-section="design" aria-label="Design content sequence">
+<div class="mosaic-stage">
+<div class="mosaic-deck">
+<article class="mosaic-story-card" data-i="0">
+<div class="mosaic-copy-panel">
+<p class="mosaic-kicker">DESIGN_DATA_01</p>
+<h3>Tile Atlas</h3>
+<p>Repeated image modules create a readable terrain from many local details.</p>
+<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>GRID 6X5</span><span>DEPTH ON</span></div>
+</div>
+<div class="mosaic-media">
+<img alt="Tile atlas data tile" src="docs/resource/scapesync_test.png"/>
+<div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
-<article class="data-card scroll-reveal" style="transition-delay: 180ms;">
-<div class="data-thumb"><img alt="Composition grid data tile" src="docs/resource/scapesync_test.png"/></div>
-<div class="p-6">
-<p class="font-data-value text-data-value text-secondary mb-3">DESIGN_DATA_02</p>
-<h3 class="font-headline-lg text-[22px] leading-7 text-primary font-['Geist'] mb-3">Composition Grid</h3>
-<p class="font-body-md text-body-md text-on-surface-variant mb-5">Cards, metrics, and image fragments align to the same spatial rhythm.</p>
-<div class="metric-strip font-data-value text-data-value text-primary"><span>LOCKED TILES</span><span>HOVER Z</span></div>
+<article class="mosaic-story-card" data-i="1">
+<div class="mosaic-copy-panel">
+<p class="mosaic-kicker text-secondary">DESIGN_DATA_02</p>
+<h3>Composition Grid</h3>
+<p>Cards, metrics, and image fragments align to the same spatial rhythm.</p>
+<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>LOCKED TILES</span><span>HOVER Z</span></div>
+</div>
+<div class="mosaic-media">
+<img alt="Composition grid data tile" src="docs/resource/scapesync_test.png"/>
+<div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
+</div>
+<div class="mosaic-status" aria-hidden="true">
+<div class="mosaic-num">01/02</div>
+<div class="mosaic-rail"><div class="mosaic-fill"></div></div>
+<div class="mosaic-label">Scroll to assemble</div>
 </div>
 </div>
 </section>
 
-<section class="sync-section mosaic-target relative py-24 md:py-32 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto overflow-hidden border-b border-primary/20" id="technology">
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-stretch">
-<article class="section-card scroll-reveal lg:col-span-5 p-8 md:p-10">
+<section class="sync-section section-intro mosaic-target relative py-24 md:py-32 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto overflow-hidden border-b border-primary/20" id="technology">
+<article class="section-card p-8 md:p-12">
 <p class="font-data-label text-data-label text-tertiary mb-4">TECHNOLOGY / LIVE SYNCHRONIZATION</p>
-<h2 class="font-headline-lg text-headline-lg text-primary mb-6 font-['Geist'] uppercase">
+<h2 class="font-headline-lg text-primary mb-6 font-['Geist'] uppercase">
                     A real time assembly pipeline.
                 </h2>
-<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed max-w-3xl">
                     Interaction, image input, and telemetry updates are represented as stable units. The tiles can breathe on the Z axis without scattering from the larger landscape.
                 </p>
 <div class="section-tile-array mt-8" data-tile-array aria-hidden="true"></div>
 </article>
-<div class="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-gutter">
-<article class="data-card scroll-reveal" style="transition-delay: 100ms;">
-<div class="data-thumb"><img alt="Depth response data tile" src="docs/resource/scapesync_test.png"/></div>
-<div class="p-6">
-<p class="font-data-value text-data-value text-tertiary mb-3">TECH_DATA_01</p>
-<h3 class="font-headline-lg text-[22px] leading-7 text-primary font-['Geist'] mb-3">Depth Response</h3>
-<p class="font-body-md text-body-md text-on-surface-variant mb-5">Pointer proximity creates a soft Z-axis ripple across the digital tile field.</p>
-<div class="metric-strip font-data-value text-data-value text-primary"><span>MAX Z 54PX</span><span>SCATTER 0</span></div>
+</section>
+
+<section class="mosaic-story" data-mosaic-story data-section="technology" aria-label="Technology content sequence">
+<div class="mosaic-stage">
+<div class="mosaic-deck">
+<article class="mosaic-story-card" data-i="0">
+<div class="mosaic-copy-panel">
+<p class="mosaic-kicker">TECH_DATA_01</p>
+<h3>Depth Response</h3>
+<p>Pointer proximity creates a soft Z-axis ripple across the digital tile field.</p>
+<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>MAX Z 54PX</span><span>SCATTER 0</span></div>
+</div>
+<div class="mosaic-media">
+<img alt="Depth response data tile" src="docs/resource/scapesync_test.png"/>
+<div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
-<article class="data-card scroll-reveal" style="transition-delay: 180ms;">
-<div class="data-thumb"><img alt="Assembly runtime data tile" src="docs/resource/scapesync_test.png"/></div>
-<div class="p-6">
-<p class="font-data-value text-data-value text-secondary mb-3">TECH_DATA_02</p>
-<h3 class="font-headline-lg text-[22px] leading-7 text-primary font-['Geist'] mb-3">Assembly Runtime</h3>
-<p class="font-body-md text-body-md text-on-surface-variant mb-5">Scroll triggers reveal each section as a local sync event in the larger system.</p>
-<div class="metric-strip font-data-value text-data-value text-primary"><span>LATENCY 12MS</span><span>QUEUE 128</span></div>
+<article class="mosaic-story-card" data-i="1">
+<div class="mosaic-copy-panel">
+<p class="mosaic-kicker text-secondary">TECH_DATA_02</p>
+<h3>Assembly Runtime</h3>
+<p>Scroll triggers reveal each section as a local sync event in the larger system.</p>
+<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>LATENCY 12MS</span><span>QUEUE 128</span></div>
+</div>
+<div class="mosaic-media">
+<img alt="Assembly runtime data tile" src="docs/resource/scapesync_test.png"/>
+<div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
+</div>
+<div class="mosaic-status" aria-hidden="true">
+<div class="mosaic-num">01/02</div>
+<div class="mosaic-rail"><div class="mosaic-fill"></div></div>
+<div class="mosaic-label">Scroll to assemble</div>
 </div>
 </div>
 </section>
@@ -825,6 +1160,193 @@
                 element.style.transitionDelay = `${delay}ms`;
             });
         });
+
+        const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+        const ease = (value) => value * value * (3 - 2 * value);
+        const storyFocus = (progress, count) => {
+            if (count <= 1) return 0;
+            return clamp(progress * (count - 1), 0, count - 1);
+        };
+
+        const seeded = (seed) => {
+            const x = Math.sin(seed * 999.7) * 10000;
+            return x - Math.floor(x);
+        };
+
+        const buildMosaicPieces = (media, cardIndex) => {
+            if (!media || media.dataset.mosaicBuilt === 'true') return [];
+
+            const img = media.querySelector('img');
+            const holder = media.querySelector('.mosaic-pieces');
+            if (!img || !holder) return [];
+
+            const cols = 10;
+            const rows = 8;
+            const total = cols * rows;
+            const src = img.getAttribute('src');
+            const maxDistance = Math.hypot((cols - 1) / 2, (rows - 1) / 2);
+
+            media.style.setProperty('--mosaic-cols', cols);
+            media.style.setProperty('--mosaic-rows', rows);
+            holder.textContent = '';
+
+            for (let row = 0; row < rows; row += 1) {
+                for (let col = 0; col < cols; col += 1) {
+                    const index = row * cols + col;
+                    const piece = document.createElement('span');
+                    const seed = (cardIndex + 1) * 1000 + index + 1;
+                    const r1 = seeded(seed);
+                    const r2 = seeded(seed + 17);
+                    const r3 = seeded(seed + 31);
+                    const distance = Math.hypot(col - (cols - 1) / 2, row - (rows - 1) / 2) / maxDistance;
+                    const order = clamp(distance * 0.62 + r1 * 0.38, 0, 1);
+                    const side = col < cols / 2 ? -1 : 1;
+                    const fromX = side * (90 + r2 * 220) + (r1 - 0.5) * 120;
+                    const fromY = (row - (rows - 1) / 2) * 22 + (r3 - 0.5) * 190;
+                    const fromZ = -260 - r1 * 220;
+                    const rotate = (r2 - 0.5) * 34 + side * 8;
+                    const scale = 0.58 + r3 * 0.28;
+                    const posX = cols === 1 ? 0 : (col / (cols - 1)) * 100;
+                    const posY = rows === 1 ? 0 : (row / (rows - 1)) * 100;
+
+                    piece.className = 'mosaic-piece';
+                    piece.dataset.order = order.toFixed(4);
+                    piece.dataset.fromX = fromX.toFixed(2);
+                    piece.dataset.fromY = fromY.toFixed(2);
+                    piece.dataset.fromZ = fromZ.toFixed(2);
+                    piece.dataset.fromRotate = rotate.toFixed(2);
+                    piece.dataset.fromScale = scale.toFixed(3);
+                    piece.style.setProperty('--piece-image', `url("${src}")`);
+                    piece.style.setProperty('--piece-size', `${cols * 100}% ${rows * 100}%`);
+                    piece.style.setProperty('--piece-position', `${posX.toFixed(4)}% ${posY.toFixed(4)}%`);
+                    piece.style.setProperty('--piece-opacity', '0');
+                    holder.appendChild(piece);
+                }
+            }
+
+            media.dataset.mosaicBuilt = 'true';
+            return Array.from(holder.children).slice(0, total);
+        };
+
+        const mosaicStories = Array.from(document.querySelectorAll('[data-mosaic-story]'));
+        const mosaicState = mosaicStories.map((story) => {
+            const cards = Array.from(story.querySelectorAll('.mosaic-story-card'));
+            const piecesByCard = cards.map((card, index) => {
+                const media = card.querySelector('.mosaic-media');
+                return buildMosaicPieces(media, index);
+            });
+
+            story.style.setProperty('--story-height', `${Math.max(320, 170 + cards.length * 125)}svh`);
+
+            return {
+                story,
+                cards,
+                piecesByCard,
+                num: story.querySelector('.mosaic-num'),
+                fill: story.querySelector('.mosaic-fill'),
+                active: -1
+            };
+        });
+
+        const placeMosaicPieces = (pieces, assemble, cardOpacity) => {
+            pieces.forEach((piece) => {
+                const order = Number(piece.dataset.order) || 0;
+                const local = ease(clamp((assemble - order * 0.46) / Math.max(0.08, 1 - order * 0.46), 0, 1));
+                const fade = cardOpacity * local;
+                const fromX = Number(piece.dataset.fromX) || 0;
+                const fromY = Number(piece.dataset.fromY) || 0;
+                const fromZ = Number(piece.dataset.fromZ) || 0;
+                const fromRotate = Number(piece.dataset.fromRotate) || 0;
+                const fromScale = Number(piece.dataset.fromScale) || 1;
+
+                piece.style.setProperty('--piece-opacity', fade.toFixed(3));
+                piece.style.setProperty('--piece-x', `${(fromX * (1 - local)).toFixed(2)}px`);
+                piece.style.setProperty('--piece-y', `${(fromY * (1 - local)).toFixed(2)}px`);
+                piece.style.setProperty('--piece-z', `${(fromZ * (1 - local)).toFixed(2)}px`);
+                piece.style.setProperty('--piece-rotate', `${(fromRotate * (1 - local)).toFixed(2)}deg`);
+                piece.style.setProperty('--piece-scale', `${(fromScale + (1 - fromScale) * local).toFixed(4)}`);
+                piece.style.setProperty('--piece-brightness', `${(0.72 + local * 0.32).toFixed(3)}`);
+                piece.style.setProperty('--piece-saturation', `${(0.7 + local * 0.42).toFixed(3)}`);
+                piece.style.setProperty('--piece-line', `${(0.035 + local * 0.075).toFixed(3)}`);
+            });
+        };
+
+        const updateMosaicStories = () => {
+            const viewportHeight = window.innerHeight || 1;
+
+            mosaicState.forEach((state) => {
+                const { story, cards, piecesByCard, num, fill } = state;
+                const count = cards.length;
+                if (!count) return;
+
+                const rect = story.getBoundingClientRect();
+                const total = Math.max(1, story.offsetHeight - viewportHeight);
+                const raw = clamp(-rect.top, 0, total);
+                const progress = raw / total;
+                const focus = storyFocus(progress, count);
+                const active = clamp(Math.round(focus), 0, count - 1);
+                const inView = rect.top < viewportHeight && rect.bottom > 0;
+
+                story.classList.toggle('is-active', inView);
+                if (fill) fill.style.width = `${(progress * 100).toFixed(2)}%`;
+                if (num) num.textContent = `${String(active + 1).padStart(2, '0')}/${String(count).padStart(2, '0')}`;
+
+                cards.forEach((card, index) => {
+                    const delta = index - focus;
+                    const abs = Math.abs(delta);
+                    const opacity = 1 - clamp((abs - 0.34) / 0.72, 0, 1);
+                    const exit = delta < 0 ? clamp(-delta, 0, 1.35) : 0;
+                    const incoming = delta > 0 ? clamp(delta, 0, 1.2) : 0;
+                    const x = -exit * viewportHeight * 0.16 + incoming * viewportHeight * 0.05;
+                    const y = delta * viewportHeight * 0.9;
+                    const scale = 1 - Math.min(abs * 0.055, 0.1);
+                    const rotate = -exit * 1.8 + incoming * 0.8;
+                    const blur = Math.min(abs * 7.5, 10);
+                    const assemble = clamp(1 - abs / 0.86, 0, 1);
+                    const copyGather = ease(assemble);
+                    const media = card.querySelector('.mosaic-media');
+                    const copy = card.querySelector('.mosaic-copy-panel');
+
+                    card.classList.toggle('is-current', index === active);
+                    card.style.opacity = opacity.toFixed(3);
+                    card.style.visibility = opacity > 0.015 ? 'visible' : 'hidden';
+                    card.style.pointerEvents = abs < 0.32 ? 'auto' : 'none';
+                    card.style.zIndex = String(80 - Math.round(abs * 10));
+                    card.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) rotateZ(${rotate.toFixed(2)}deg) scale(${scale.toFixed(4)})`;
+                    card.style.filter = blur > 0.1 ? `blur(${blur.toFixed(2)}px)` : 'none';
+
+                    if (media) {
+                        media.style.setProperty('--image-opacity', `${(0.12 + assemble * 0.24).toFixed(3)}`);
+                        media.style.setProperty('--image-scale', `${(1.08 - assemble * 0.08).toFixed(4)}`);
+                    }
+
+                    if (copy) {
+                        copy.style.setProperty('--copy-solid', `${(opacity * (0.18 + copyGather * 0.82)).toFixed(3)}`);
+                        copy.style.setProperty('--copy-x', `${((1 - copyGather) * 42).toFixed(2)}px`);
+                        copy.style.setProperty('--copy-blur', `${((1 - copyGather) * 8).toFixed(2)}px`);
+                        copy.style.setProperty('--copy-grain', `${(opacity * (1 - copyGather) * 0.82).toFixed(3)}`);
+                        copy.style.setProperty('--copy-grain-x', `${((1 - copyGather) * 24).toFixed(2)}px`);
+                    }
+
+                    placeMosaicPieces(piecesByCard[index], assemble, opacity);
+                });
+
+                state.active = active;
+            });
+        };
+
+        let mosaicFrame = null;
+        const queueMosaicStories = () => {
+            if (mosaicFrame) return;
+            mosaicFrame = window.requestAnimationFrame(() => {
+                mosaicFrame = null;
+                updateMosaicStories();
+            });
+        };
+
+        window.addEventListener('scroll', queueMosaicStories, { passive: true });
+        window.addEventListener('resize', queueMosaicStories, { passive: true });
+        updateMosaicStories();
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
