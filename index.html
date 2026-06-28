@@ -252,7 +252,11 @@
         }
 
         .section-intro .section-card {
-            width: min(860px, 100%);
+            width: 100%;
+            min-height: min(56vh, 520px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .section-intro .section-card h2 {
@@ -624,41 +628,99 @@
             transform: translateX(-50%);
             width: min(1320px, calc(100% - clamp(40px, 10vw, 128px)));
             display: flex;
-            align-items: center;
-            gap: 22px;
+            align-items: stretch;
+            gap: 14px;
             color: rgba(219, 252, 255, 0.7);
             font-family: 'JetBrains Mono', monospace;
         }
 
         .mosaic-num {
-            min-width: 60px;
+            min-width: 76px;
+            display: grid;
+            place-items: center;
+            padding: 0 12px;
+            border: 1px solid rgba(0, 240, 255, 0.42);
+            background: rgba(0, 240, 255, 0.08);
             color: #00f0ff;
             font-size: 12px;
             letter-spacing: 0.16em;
+            box-shadow: inset 0 0 18px rgba(0, 240, 255, 0.08);
         }
 
         .mosaic-rail {
             position: relative;
             flex: 1;
-            height: 2px;
+            height: 34px;
             overflow: hidden;
-            background: rgba(219, 252, 255, 0.16);
+            border: 1px solid rgba(219, 252, 255, 0.18);
+            background:
+                linear-gradient(rgba(219, 252, 255, 0.04), rgba(219, 252, 255, 0.01)),
+                repeating-linear-gradient(90deg, rgba(219, 252, 255, 0.13) 0 1px, transparent 1px calc(100% / 18)),
+                repeating-linear-gradient(0deg, rgba(219, 252, 255, 0.11) 0 1px, transparent 1px 50%);
+            box-shadow:
+                inset 0 0 28px rgba(0, 240, 255, 0.06),
+                0 0 24px rgba(0, 240, 255, 0.08);
+        }
+
+        .mosaic-rail::before,
+        .mosaic-rail::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .mosaic-rail::before {
+            background:
+                repeating-linear-gradient(90deg, transparent 0 calc(100% / 18 - 1px), rgba(12, 19, 36, 0.88) calc(100% / 18 - 1px) calc(100% / 18)),
+                repeating-linear-gradient(0deg, transparent 0 calc(50% - 1px), rgba(12, 19, 36, 0.88) calc(50% - 1px) 50%);
+            mix-blend-mode: multiply;
+            opacity: 0.86;
+            z-index: 2;
+        }
+
+        .mosaic-rail::after {
+            inset: 6px;
+            border: 1px solid rgba(0, 240, 255, 0.14);
+            opacity: 0.72;
+            z-index: 3;
         }
 
         .mosaic-fill {
             position: absolute;
             inset: 0 auto 0 0;
             width: 0%;
-            background: linear-gradient(90deg, #00f0ff, #d0bcff);
-            box-shadow: 0 0 18px rgba(0, 240, 255, 0.48);
+            min-width: 2px;
+            background:
+                linear-gradient(90deg, rgba(0, 240, 255, 0.96), rgba(113, 248, 228, 0.78) 55%, rgba(208, 188, 255, 0.92)),
+                repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.34) 0 1px, transparent 1px calc(100% / 12));
+            box-shadow:
+                0 0 22px rgba(0, 240, 255, 0.42),
+                inset 0 0 18px rgba(255, 255, 255, 0.16);
+            z-index: 1;
         }
 
         .mosaic-label {
-            min-width: 178px;
-            text-align: right;
-            font-size: 11px;
-            letter-spacing: 0.14em;
+            min-width: 150px;
+            display: grid;
+            align-content: center;
+            gap: 2px;
+            text-align: left;
             text-transform: uppercase;
+        }
+
+        .mosaic-label span {
+            color: #dbfcff;
+            font-size: 11px;
+            line-height: 1;
+            letter-spacing: 0.14em;
+        }
+
+        .mosaic-label small {
+            color: rgba(211, 255, 246, 0.62);
+            font-size: 9px;
+            line-height: 1.2;
+            letter-spacing: 0.18em;
         }
 
         @media (max-width: 767px) {
@@ -760,7 +822,13 @@
             }
 
             .mosaic-status {
-                display: none;
+                position: relative;
+                left: auto;
+                bottom: auto;
+                transform: none;
+                width: min(1320px, calc(100% - 40px));
+                margin: 24px auto 0;
+                display: flex;
             }
         }
 
@@ -798,7 +866,7 @@
 <main class="relative z-10">
 <section class="mosaic-target relative min-h-[88vh] w-full flex items-center overflow-hidden pt-28 pb-16 border-b border-primary/20" id="top">
 <div class="absolute inset-0 z-0">
-<img alt="SCAPESYNC photomosaic terrain preview" class="w-full h-full object-cover mix-blend-luminosity opacity-80" src="docs/resource/scapesync_test.png"/>
+<img alt="SCAPESYNC photomosaic terrain preview" class="w-full h-full object-cover mix-blend-luminosity opacity-80" src="assets/scapesync_test.png"/>
 <div class="absolute inset-0 bg-surface/70"></div>
 <div id="hero-mosaic-overlay"></div>
 </div>
@@ -848,7 +916,7 @@
 <div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>SOURCE PHOTO</span><span>SYNC 94%</span></div>
 </div>
 <div class="mosaic-media">
-<img alt="Visitor snapshot data tile" src="docs/resource/scapesync_test.png"/>
+<img alt="Visitor snapshot data tile" src="assets/scapesync_test.png"/>
 <div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
@@ -860,7 +928,7 @@
 <div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>HUMIDITY 62%</span><span>WIND 4.8M/S</span></div>
 </div>
 <div class="mosaic-media">
-<img alt="Telemetry data tile" src="docs/resource/scapesync_test.png"/>
+<img alt="Telemetry data tile" src="assets/scapesync_test.png"/>
 <div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
@@ -868,7 +936,7 @@
 <div class="mosaic-status" aria-hidden="true">
 <div class="mosaic-num">01/02</div>
 <div class="mosaic-rail"><div class="mosaic-fill"></div></div>
-<div class="mosaic-label">Scroll to assemble</div>
+<div class="mosaic-label"><span>Mosaic sync</span><small>Tile assembly</small></div>
 </div>
 </div>
 </section>
@@ -897,7 +965,7 @@
 <div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>GRID 6X5</span><span>DEPTH ON</span></div>
 </div>
 <div class="mosaic-media">
-<img alt="Tile atlas data tile" src="docs/resource/scapesync_test.png"/>
+<img alt="Tile atlas data tile" src="assets/scapesync_test.png"/>
 <div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
@@ -909,7 +977,7 @@
 <div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>LOCKED TILES</span><span>HOVER Z</span></div>
 </div>
 <div class="mosaic-media">
-<img alt="Composition grid data tile" src="docs/resource/scapesync_test.png"/>
+<img alt="Composition grid data tile" src="assets/scapesync_test.png"/>
 <div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
@@ -917,7 +985,7 @@
 <div class="mosaic-status" aria-hidden="true">
 <div class="mosaic-num">01/02</div>
 <div class="mosaic-rail"><div class="mosaic-fill"></div></div>
-<div class="mosaic-label">Scroll to assemble</div>
+<div class="mosaic-label"><span>Mosaic sync</span><small>Tile assembly</small></div>
 </div>
 </div>
 </section>
@@ -946,7 +1014,7 @@
 <div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>MAX Z 54PX</span><span>SCATTER 0</span></div>
 </div>
 <div class="mosaic-media">
-<img alt="Depth response data tile" src="docs/resource/scapesync_test.png"/>
+<img alt="Depth response data tile" src="assets/scapesync_test.png"/>
 <div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
@@ -958,7 +1026,7 @@
 <div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>LATENCY 12MS</span><span>QUEUE 128</span></div>
 </div>
 <div class="mosaic-media">
-<img alt="Assembly runtime data tile" src="docs/resource/scapesync_test.png"/>
+<img alt="Assembly runtime data tile" src="assets/scapesync_test.png"/>
 <div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
@@ -966,7 +1034,7 @@
 <div class="mosaic-status" aria-hidden="true">
 <div class="mosaic-num">01/02</div>
 <div class="mosaic-rail"><div class="mosaic-fill"></div></div>
-<div class="mosaic-label">Scroll to assemble</div>
+<div class="mosaic-label"><span>Mosaic sync</span><small>Tile assembly</small></div>
 </div>
 </div>
 </section>
