@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist.css" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="assets/scapesync-common.css" rel="stylesheet"/>
 <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -849,15 +850,15 @@
 <body class="antialiased">
 <div id="ambient-tile-field" aria-hidden="true"></div>
 
-<nav class="fixed top-0 w-full z-50 bg-surface/90 border-b border-primary/20">
-<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-5 w-full max-w-container-max mx-auto gap-6">
-<a class="font-headline-lg text-headline-lg font-bold text-primary uppercase font-['Geist']" href="#top">SCAPESYNC</a>
-<div class="hidden md:flex items-center space-x-8">
-<a class="text-primary border-b-2 border-primary pb-1 font-data-label text-data-label" href="#about">ABOUT</a>
-<a class="text-on-surface-variant hover:text-primary transition-colors font-data-label text-data-label" href="#design">DESIGN</a>
-<a class="text-on-surface-variant hover:text-primary transition-colors font-data-label text-data-label" href="#technology">TECHNOLOGY</a>
-<a class="text-on-surface-variant hover:text-primary transition-colors font-data-label text-data-label" href="board.html">BOARD</a>
-<a class="text-on-surface-variant hover:text-primary transition-colors font-data-label text-data-label" href="contact.html">CONTACT</a>
+<nav class="sc-nav">
+<div class="sc-nav-inner">
+<a class="sc-brand" href="#top">SCAPESYNC</a>
+<div class="sc-nav-menu">
+<a class="sc-nav-link active" href="#about">ABOUT</a>
+<a class="sc-nav-link" href="#design">DESIGN</a>
+<a class="sc-nav-link" href="#technology">TECHNOLOGY</a>
+<a class="sc-nav-link" href="board.html">BOARD</a>
+<a class="sc-nav-link" href="contact.html">CONTACT</a>
 </div>
 </div>
 </nav>
@@ -1033,56 +1034,9 @@
 </section>
 </main>
 
+<script src="assets/scapesync-ambient.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const ambientField = document.getElementById('ambient-tile-field');
-        const ambientTiles = [];
-        let ambientColumns = 0;
-        let ambientRows = 0;
-        let ambientCellWidth = 0;
-        let ambientCellHeight = 0;
-
-        const clearAmbientTile = (tile) => {
-            tile.classList.remove('is-near');
-            tile.style.removeProperty('--tile-z');
-            tile.style.removeProperty('--tile-rx');
-            tile.style.removeProperty('--tile-ry');
-            tile.style.removeProperty('--tile-alpha');
-            tile.style.removeProperty('--tile-border');
-            tile.style.removeProperty('--tile-opacity');
-            tile.style.removeProperty('--tile-glow');
-        };
-
-        const rebuildAmbientTiles = () => {
-            if (!ambientField) return;
-
-            const targetSize = window.innerWidth < 768 ? 27 : 30;
-            ambientColumns = Math.max(1, Math.ceil(window.innerWidth / targetSize));
-            ambientRows = Math.max(1, Math.ceil(window.innerHeight / targetSize));
-            ambientCellWidth = window.innerWidth / ambientColumns;
-            ambientCellHeight = window.innerHeight / ambientRows;
-
-            ambientField.style.setProperty('--ambient-columns', ambientColumns);
-            ambientField.style.setProperty('--ambient-rows', ambientRows);
-
-            const targetTileCount = ambientColumns * ambientRows;
-            while (ambientTiles.length < targetTileCount) {
-                const tile = document.createElement('div');
-                tile.className = 'ambient-tile';
-                ambientField.appendChild(tile);
-                ambientTiles.push(tile);
-            }
-
-            while (ambientTiles.length > targetTileCount) {
-                const tile = ambientTiles.pop();
-                tile.remove();
-            }
-        };
-
-        if (ambientField) {
-            rebuildAmbientTiles();
-        }
-
         const heroOverlay = document.getElementById('hero-mosaic-overlay');
         if (heroOverlay) {
             for (let i = 0; i < 100; i += 1) {
@@ -1143,66 +1097,6 @@
                 section.style.setProperty('--tile-ry', '0deg');
             });
         });
-
-        let mouseX = -9999;
-        let mouseY = -9999;
-        let ambientFrame = null;
-
-        const resetAmbientTiles = () => {
-            ambientTiles.forEach(clearAmbientTile);
-        };
-
-        const updateAmbientTiles = () => {
-            ambientFrame = null;
-            const reach = window.innerWidth < 768 ? 138 : 178;
-            const maxDepth = window.innerWidth < 768 ? 34 : 54;
-
-            ambientTiles.forEach((tile, index) => {
-                const column = index % ambientColumns;
-                const row = Math.floor(index / ambientColumns);
-                const centerX = (column + 0.5) * ambientCellWidth;
-                const centerY = (row + 0.5) * ambientCellHeight;
-                const dx = mouseX - centerX;
-                const dy = mouseY - centerY;
-                const distance = Math.hypot(dx, dy);
-
-                if (distance > reach) {
-                    clearAmbientTile(tile);
-                    return;
-                }
-
-                const falloff = 1 - distance / reach;
-                const intensity = falloff * falloff * (3 - 2 * falloff);
-                const depth = 1.5 + intensity * maxDepth;
-
-                tile.classList.add('is-near');
-                tile.style.setProperty('--tile-z', `${depth.toFixed(1)}px`);
-                tile.style.setProperty('--tile-rx', `${((-dy / reach) * 7 * intensity).toFixed(2)}deg`);
-                tile.style.setProperty('--tile-ry', `${((dx / reach) * 7 * intensity).toFixed(2)}deg`);
-                tile.style.setProperty('--tile-alpha', `${(0.026 + intensity * 0.13).toFixed(3)}`);
-                tile.style.setProperty('--tile-border', `${(0.045 + intensity * 0.36).toFixed(3)}`);
-                tile.style.setProperty('--tile-opacity', `${(0.54 + intensity * 0.46).toFixed(3)}`);
-                tile.style.setProperty('--tile-glow', `${(intensity * 26).toFixed(1)}`);
-            });
-        };
-
-        if (ambientTiles.length) {
-            window.addEventListener('mousemove', (event) => {
-                mouseX = event.clientX;
-                mouseY = event.clientY;
-                if (!ambientFrame) {
-                    ambientFrame = window.requestAnimationFrame(updateAmbientTiles);
-                }
-            }, { passive: true });
-
-            window.addEventListener('mouseleave', resetAmbientTiles);
-            window.addEventListener('resize', () => {
-                rebuildAmbientTiles();
-                if (mouseX > -1 && mouseY > -1 && !ambientFrame) {
-                    ambientFrame = window.requestAnimationFrame(updateAmbientTiles);
-                }
-            }, { passive: true });
-        }
 
         document.querySelectorAll('.sync-section.mosaic-target').forEach((section) => {
             section.querySelectorAll('.scroll-reveal').forEach((element, index) => {
