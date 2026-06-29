@@ -1,9 +1,22 @@
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html class="dark is-preloading" lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>SCAPESYNC | Atmospheric Photomosaic Systems</title>
+<script>
+    (() => {
+        try {
+            if (sessionStorage.getItem('scapesync-main-assets-ready-v4') === '1') {
+                document.documentElement.classList.remove('is-preloading');
+            }
+        } catch (error) {
+            // Session storage can be unavailable in some privacy modes.
+        }
+    })();
+</script>
+<link rel="preload" as="image" href="assets/resource/scapesync_banner.jpg" fetchpriority="high"/>
+<link rel="preload" as="video" href="assets/resource/Scapesync_about_video.mp4" type="video/mp4"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist.css" rel="stylesheet"/>
@@ -771,6 +784,205 @@
             letter-spacing: 0.18em;
         }
 
+        html.is-preloading,
+        html.is-preloading body {
+            overflow: hidden;
+        }
+
+        #asset-preloader {
+            --preload-progress: 0;
+            position: fixed;
+            inset: 0;
+            z-index: 120;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 18% 42%, rgba(0, 240, 255, 0.16), transparent 32%),
+                radial-gradient(circle at 76% 62%, rgba(208, 188, 255, 0.12), transparent 36%),
+                linear-gradient(180deg, rgba(7, 13, 31, 0.98), rgba(5, 8, 18, 0.98));
+            color: #dbfcff;
+            transition: opacity 620ms ease, visibility 620ms ease;
+            pointer-events: auto;
+        }
+
+        #asset-preloader::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            background:
+                linear-gradient(rgba(219, 252, 255, 0.045) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(219, 252, 255, 0.045) 1px, transparent 1px),
+                radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.12), transparent 38%);
+            background-size: 48px 48px, 48px 48px, 100% 100%;
+            opacity: 0;
+            transform: scale(1.05);
+            transition: opacity 720ms ease, transform 1100ms cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        #asset-preloader.is-grid-on::before,
+        #asset-preloader.is-assembling::before {
+            opacity: 0.82;
+            transform: scale(1);
+        }
+
+        #asset-preloader.is-revealing::before {
+            opacity: 0;
+            transform: scale(1.08);
+        }
+
+        html:not(.is-preloading) #asset-preloader {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .preloader-shell {
+            position: absolute;
+            left: 50%;
+            top: calc(50% + clamp(104px, 14vh, 148px));
+            z-index: 3;
+            width: min(620px, calc(100% - 40px));
+            display: grid;
+            gap: 14px;
+            text-align: center;
+            transform: translate3d(-50%, 0, 0);
+            transition: opacity 720ms ease, transform 720ms cubic-bezier(0.16, 1, 0.3, 1), filter 720ms ease;
+        }
+
+        #asset-preloader.is-revealing .preloader-shell {
+            opacity: 0;
+            filter: blur(10px);
+            transform: translate3d(-50%, -18px, 0) scale(1.035);
+        }
+
+        .preloader-word {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip-path: inset(50%);
+            white-space: nowrap;
+        }
+
+        #asset-preloader.is-assembling .preloader-word {
+            opacity: 0;
+        }
+
+        .preloader-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            letter-spacing: 0;
+            color: rgba(219, 252, 255, 0.68);
+            text-transform: uppercase;
+            opacity: 0.72;
+        }
+
+        .preloader-grid {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            overflow: hidden;
+            pointer-events: none;
+            perspective: 1200px;
+        }
+
+        .preloader-target-tile,
+        .preloader-tile {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: var(--tile-size, 10px);
+            height: var(--tile-size, 10px);
+            transform-origin: center;
+        }
+
+        .preloader-target-tile {
+            z-index: 1;
+            border: 1px solid rgba(219, 252, 255, 0.08);
+            background:
+                linear-gradient(135deg, rgba(219, 252, 255, 0.1), rgba(0, 240, 255, 0.04)),
+                rgba(12, 19, 36, 0.46);
+            opacity: 0.34;
+            box-shadow: inset 0 0 8px rgba(219, 252, 255, 0.05);
+            transform: translate3d(var(--assemble-x), var(--assemble-y), -2px);
+            transition: opacity 620ms ease, filter 620ms ease;
+        }
+
+        #asset-preloader.is-assembling .preloader-target-tile {
+            opacity: 0.46;
+        }
+
+        #asset-preloader.is-revealing .preloader-target-tile {
+            opacity: 0;
+            filter: blur(8px);
+        }
+
+        .preloader-tile {
+            z-index: 2;
+            border: 1px solid rgba(219, 252, 255, 0.12);
+            background:
+                linear-gradient(135deg, rgba(0, 240, 255, 0.32), rgba(208, 188, 255, 0.16)),
+                rgba(12, 19, 36, 0.8);
+            opacity: 0.1;
+            box-shadow: none;
+            transform:
+                translate3d(var(--scatter-x), var(--scatter-y), var(--scatter-z))
+                scale(var(--scatter-scale))
+                rotateZ(var(--scatter-rotate));
+            transition:
+                opacity 620ms ease var(--tile-delay, 0ms),
+                transform 1120ms cubic-bezier(0.16, 1, 0.3, 1) var(--tile-delay, 0ms),
+                border-color 620ms ease var(--tile-delay, 0ms),
+                background-color 620ms ease var(--tile-delay, 0ms),
+                box-shadow 620ms ease var(--tile-delay, 0ms);
+            will-change: transform, opacity;
+        }
+
+        #asset-preloader.is-assembling .preloader-tile {
+            opacity: 0.72;
+            border-color: rgba(219, 252, 255, 0.34);
+            transform:
+                translate3d(var(--assemble-x), var(--assemble-y), 0)
+                scale(1)
+                rotateZ(0deg);
+        }
+
+        #asset-preloader.is-revealing .preloader-tile {
+            opacity: 0;
+            transform:
+                translate3d(var(--reveal-x), var(--reveal-y), 120px)
+                scale(0.18)
+                rotateZ(var(--reveal-rotate));
+            transition-duration: 820ms;
+        }
+
+        .preloader-rail {
+            position: relative;
+            height: 9px;
+            overflow: hidden;
+            border: 1px solid rgba(219, 252, 255, 0.18);
+            background:
+                repeating-linear-gradient(90deg, rgba(219, 252, 255, 0.12) 0 1px, transparent 1px calc(100% / 18)),
+                rgba(12, 19, 36, 0.9);
+        }
+
+        .preloader-rail > span {
+            position: absolute;
+            inset: 0;
+            width: calc(var(--preload-progress, 0) * 100%);
+            background:
+                linear-gradient(90deg, rgba(0, 240, 255, 0.96), rgba(113, 248, 228, 0.82) 58%, rgba(208, 188, 255, 0.92));
+            box-shadow: 0 0 24px rgba(0, 240, 255, 0.42);
+            transition: width 260ms ease;
+        }
+
         @media (max-width: 767px) {
             #ambient-tile-field {
                 gap: 1px;
@@ -806,6 +1018,17 @@
             .mosaic-label {
                 display: none;
             }
+
+            .preloader-shell {
+                gap: 24px;
+                top: calc(50% + 94px);
+                width: min(520px, calc(100% - 36px));
+            }
+
+            .preloader-meta {
+                align-items: flex-start;
+                flex-direction: column;
+            }
         }
 
         ::-webkit-scrollbar {
@@ -824,6 +1047,19 @@
 </head>
 <body class="antialiased">
 <div id="ambient-tile-field" aria-hidden="true"></div>
+<div id="asset-preloader" role="status" aria-live="polite" aria-label="Loading SCAPESYNC media assets">
+<div class="preloader-grid" data-preload-grid aria-hidden="true"></div>
+<div class="preloader-shell">
+<div>
+<div class="preloader-word">SCAPESYNC</div>
+<div class="preloader-meta">
+<span>Loading Contents...</span>
+<span data-preload-percent>0%</span>
+</div>
+</div>
+<div class="preloader-rail" aria-hidden="true"><span data-preload-bar></span></div>
+</div>
+</div>
 
 <nav class="sc-nav">
 <div class="sc-nav-inner">
@@ -841,7 +1077,7 @@
 <main class="relative z-10">
 <section class="hero-banner" id="top">
 <div class="hero-banner-media">
-<img alt="SCAPESYNC photomosaic terrain preview" class="hero-banner-image" src="assets/resource/scapesync_banner.jpg"/>
+<img alt="SCAPESYNC photomosaic terrain preview" class="hero-banner-image" src="assets/resource/scapesync_banner.jpg" fetchpriority="high" decoding="async"/>
 </div>
 </section>
 
@@ -859,7 +1095,7 @@
 
 <section class="about-video-section" aria-label="SCAPESYNC about video">
 <div class="about-video-frame">
-<video aria-label="SCAPESYNC about video" autoplay muted loop playsinline preload="metadata">
+<video aria-label="SCAPESYNC about video" autoplay muted loop playsinline preload="auto">
 <source src="assets/resource/Scapesync_about_video.mp4" type="video/mp4"/>
 </video>
 </div>
@@ -1033,6 +1269,393 @@
 </footer>
 
 <script src="assets/scapesync-ambient.js"></script>
+<script>
+    (() => {
+        const preloadSessionKey = 'scapesync-main-assets-ready-v4';
+        const preloadAssets = [
+            { type: 'image', src: 'assets/resource/scapesync_banner.jpg', weight: 3 },
+            { type: 'video', src: 'assets/resource/Scapesync_about_video.mp4', weight: 18 },
+            { type: 'image', src: 'assets/resource/Scapesync_design_1.jpeg', weight: 1 },
+            { type: 'image', src: 'assets/resource/Scapesync_design_2.jpeg', weight: 1 },
+            { type: 'image', src: 'assets/resource/Scapesync_design_3.png', weight: 1 },
+            { type: 'image', src: 'assets/resource/Scapesync_design_4.png', weight: 1 },
+            { type: 'image', src: 'assets/resource/Scapesync_design_5.png', weight: 1 },
+            { type: 'image', src: 'assets/resource/Scapesync_design_6.png', weight: 1 },
+            { type: 'image', src: 'assets/resource/Scapesync_design_7.png', weight: 1 },
+            { type: 'image', src: 'assets/resource/Scapesync_design_8.png', weight: 1 },
+            { type: 'image', src: 'assets/resource/scapesync_technology_2.jpg', weight: 3 },
+            { type: 'image', src: 'assets/resource/scapesync_technology_3.jpg', weight: 3 },
+            { type: 'image', src: 'assets/resource/scapesync_technology_4.jpg', weight: 3 }
+        ];
+
+        const doc = document.documentElement;
+        const loader = document.getElementById('asset-preloader');
+        const grid = loader?.querySelector('[data-preload-grid]');
+        const counter = loader?.querySelector('[data-preload-percent]');
+        const shell = loader?.querySelector('.preloader-shell');
+        const word = loader?.querySelector('.preloader-word');
+        const startedAt = performance.now();
+        const minVisibleMs = 2800;
+        const totalWeight = preloadAssets.reduce((sum, asset) => sum + asset.weight, 0);
+        const assetProgress = preloadAssets.map(() => 0);
+
+        if (!loader) {
+            doc.classList.remove('is-preloading');
+            return;
+        }
+
+        try {
+            if (sessionStorage.getItem(preloadSessionKey) === '1') {
+                doc.classList.remove('is-preloading');
+                loader.remove();
+                return;
+            }
+        } catch (error) {
+            // Continue with preload if session storage is unavailable.
+        }
+
+        const seeded = (seed) => {
+            const x = Math.sin(seed * 938.27) * 10000;
+            return x - Math.floor(x);
+        };
+
+        const pixelFont = {
+            S: ['1111111', '1000000', '1000000', '1000000', '1111110', '0000001', '0000001', '0000001', '1111110'],
+            C: ['0111111', '1000000', '1000000', '1000000', '1000000', '1000000', '1000000', '1000000', '0111111'],
+            A: ['0011100', '0100010', '1000001', '1000001', '1111111', '1000001', '1000001', '1000001', '1000001'],
+            P: ['1111110', '1000001', '1000001', '1000001', '1111110', '1000000', '1000000', '1000000', '1000000'],
+            E: ['1111111', '1000000', '1000000', '1000000', '1111110', '1000000', '1000000', '1000000', '1111111'],
+            Y: ['1000001', '0100010', '0010100', '0001000', '0001000', '0001000', '0001000', '0001000', '0001000'],
+            N: ['1000001', '1100001', '1010001', '1001001', '1000101', '1000011', '1000001', '1000001', '1000001']
+        };
+
+        const buildWordmarkCells = (text) => {
+            const letterGap = 2;
+            const cells = [];
+            let cursor = 0;
+            let rows = 0;
+
+            text.split('').forEach((char) => {
+                const pattern = pixelFont[char];
+                if (!pattern) return;
+                rows = Math.max(rows, pattern.length);
+
+                pattern.forEach((line, row) => {
+                    line.split('').forEach((value, column) => {
+                        if (value === '1') {
+                            cells.push({ column: cursor + column, row });
+                        }
+                    });
+                });
+
+                cursor += pattern[0].length + letterGap;
+            });
+
+            const columns = Math.max(1, cursor - letterGap);
+            return cells.map((cell) => ({
+                x: cell.column - (columns - 1) / 2,
+                y: cell.row - (rows - 1) / 2,
+                columns,
+                rows
+            }));
+        };
+
+        const wordPoints = buildWordmarkCells('SCAPESYNC');
+        const tileCount = wordPoints.length;
+        const preloadTiles = [];
+
+        const applyAssemblyTileStyle = (tile) => {
+            const on = Number(tile.dataset.tileOn || 0);
+            const opacity = 0.38 + on * 0.62;
+            const border = 0.18 + on * 0.58;
+            const glow = 8 + on * 34;
+            const scale = 0.78 + on * 0.22;
+
+            tile.style.opacity = opacity.toFixed(3);
+            tile.style.borderColor = `rgba(219, 252, 255, ${border.toFixed(3)})`;
+            tile.style.background = on > 0
+                ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(0, 240, 255, 0.78) 48%, rgba(208, 188, 255, 0.78)), rgba(219, 252, 255, 0.92)'
+                : 'linear-gradient(135deg, rgba(0, 240, 255, 0.32), rgba(208, 188, 255, 0.16)), rgba(12, 19, 36, 0.8)';
+            tile.style.boxShadow = `0 0 ${glow.toFixed(1)}px rgba(0, 240, 255, ${on > 0 ? '0.42' : '0.14'}), inset 0 0 10px rgba(255, 255, 255, ${on > 0 ? '0.28' : '0.08'})`;
+            tile.style.transform = `translate3d(var(--assemble-x), var(--assemble-y), 0) scale(${scale.toFixed(3)}) rotateZ(0deg)`;
+        };
+
+        for (let i = 0; i < tileCount; i += 1) {
+            const r1 = seeded(i + 1);
+            const r2 = seeded(i + 17);
+            const r3 = seeded(i + 43);
+            const r4 = seeded(i + 89);
+            const viewportW = window.innerWidth || 1440;
+            const viewportH = window.innerHeight || 900;
+            const point = wordPoints[i % wordPoints.length] || { x: 0, y: 0 };
+            const wordWidth = Math.min(Math.max(320, viewportW - 128), 1040);
+            const cellStep = wordWidth / Math.max(1, (point.columns || 1) - 1);
+            const tileSize = Math.max(3.2, Math.min(11.5, cellStep * 0.74));
+            const scatterX = (r1 - 0.5) * viewportW * 1.24;
+            const scatterY = (r2 - 0.5) * viewportH * 1.18;
+            const revealAngle = r3 * Math.PI * 2;
+            const revealDistance = Math.max(viewportW, viewportH) * (0.62 + r4 * 0.34);
+            const assembleDelay = Math.round((Math.abs(point.x) / Math.max(1, point.columns || 1)) * 140 + r4 * 260);
+            const tile = document.createElement('span');
+            tile.className = 'preloader-tile';
+            tile.style.setProperty('--tile-size', `${tileSize.toFixed(2)}px`);
+            tile.style.setProperty('--tile-delay', `${assembleDelay}ms`);
+            tile.style.setProperty('--scatter-x', `${scatterX.toFixed(2)}px`);
+            tile.style.setProperty('--scatter-y', `${scatterY.toFixed(2)}px`);
+            tile.style.setProperty('--scatter-z', `${(-420 + r3 * 260).toFixed(2)}px`);
+            tile.style.setProperty('--scatter-scale', `${(0.34 + r4 * 0.52).toFixed(3)}`);
+            tile.style.setProperty('--scatter-rotate', `${(-34 + r1 * 68).toFixed(2)}deg`);
+            tile.style.setProperty('--assemble-x', `${(point.x * cellStep).toFixed(2)}px`);
+            tile.style.setProperty('--assemble-y', `${(point.y * cellStep).toFixed(2)}px`);
+            tile.style.setProperty('--assemble-z', '0px');
+            tile.style.setProperty('--assemble-rotate', '0deg');
+            tile.style.setProperty('--reveal-x', `${(Math.cos(revealAngle) * revealDistance).toFixed(2)}px`);
+            tile.style.setProperty('--reveal-y', `${(Math.sin(revealAngle) * revealDistance).toFixed(2)}px`);
+            tile.style.setProperty('--reveal-rotate', `${(-80 + r1 * 160).toFixed(2)}deg`);
+            tile.dataset.tileOn = '0';
+
+            const targetTile = document.createElement('span');
+            targetTile.className = 'preloader-target-tile';
+            targetTile.style.setProperty('--tile-size', `${tileSize.toFixed(2)}px`);
+            targetTile.style.setProperty('--assemble-x', `${(point.x * cellStep).toFixed(2)}px`);
+            targetTile.style.setProperty('--assemble-y', `${(point.y * cellStep).toFixed(2)}px`);
+            grid?.appendChild(targetTile);
+            grid?.appendChild(tile);
+            preloadTiles.push(tile);
+        }
+
+        window.setTimeout(() => loader.classList.add('is-grid-on'), 40);
+        window.setTimeout(() => {
+            loader.classList.add('is-assembling');
+            if (word) {
+                word.style.opacity = '1';
+                word.style.filter = 'blur(0)';
+                word.style.transform = 'translateZ(0) scale(1)';
+            }
+            preloadTiles.forEach(applyAssemblyTileStyle);
+        }, 360);
+
+        const setProgress = (value) => {
+            const progress = Math.max(0, Math.min(1, value));
+            loader.style.setProperty('--preload-progress', progress.toFixed(4));
+            if (counter) {
+                counter.textContent = `${Math.round(progress * 100)}%`;
+            }
+
+            const activeTiles = Math.round(progress * preloadTiles.length);
+            preloadTiles.forEach((tile, index) => {
+                tile.dataset.tileOn = index < activeTiles ? '1' : '0';
+                if (loader.classList.contains('is-assembling') && !loader.classList.contains('is-revealing')) {
+                    applyAssemblyTileStyle(tile);
+                }
+            });
+        };
+
+        const updateAssetProgress = (index, value) => {
+            assetProgress[index] = Math.max(assetProgress[index], Math.max(0, Math.min(1, value)));
+            const weightedProgress = assetProgress.reduce((sum, progress, assetIndex) => {
+                return sum + progress * preloadAssets[assetIndex].weight;
+            }, 0);
+            setProgress(weightedProgress / totalWeight);
+        };
+
+        const resolveAfter = (ms) => new Promise((resolve) => {
+            window.setTimeout(resolve, ms);
+        });
+
+        const withTimeout = (promise, ms) => Promise.race([
+            promise,
+            resolveAfter(ms)
+        ]);
+
+        const decodeImage = (image) => {
+            if (typeof image.decode !== 'function') return Promise.resolve();
+            return image.decode().catch(() => undefined);
+        };
+
+        const preloadImage = (src) => withTimeout(new Promise((resolve) => {
+            const existing = document.querySelector(`img[src="${src}"]`);
+            const image = existing || new Image();
+
+            const finish = () => {
+                decodeImage(image).then(resolve);
+            };
+
+            if (image.complete && image.naturalWidth > 0) {
+                finish();
+                return;
+            }
+
+            image.decoding = 'async';
+            image.onload = finish;
+            image.onerror = resolve;
+
+            if (!existing) {
+                image.src = src;
+            }
+        }), 18000);
+
+        const requestVideoBlob = (src, onProgress) => {
+            if (window.XMLHttpRequest) {
+                return new Promise((resolve, reject) => {
+                    const request = new XMLHttpRequest();
+                    request.open('GET', src, true);
+                    request.responseType = 'blob';
+                    request.onprogress = (event) => {
+                        if (event.lengthComputable) {
+                            onProgress(Math.min(0.96, event.loaded / event.total));
+                        }
+                    };
+                    request.onload = () => {
+                        if (request.status >= 200 && request.status < 300) {
+                            onProgress(0.98);
+                            resolve(request.response);
+                            return;
+                        }
+                        reject(new Error('video preload failed'));
+                    };
+                    request.onerror = reject;
+                    request.ontimeout = reject;
+                    request.timeout = 120000;
+                    request.send();
+                });
+            }
+
+            if (window.fetch) {
+                return fetch(src, { cache: 'force-cache' })
+                    .then((response) => {
+                        if (!response.ok) throw new Error('video preload failed');
+                        onProgress(0.4);
+                        return response.blob();
+                    })
+                    .then((blob) => {
+                        onProgress(0.98);
+                        return blob;
+                    });
+            }
+
+            return Promise.reject(new Error('video preload unsupported'));
+        };
+
+        const preloadVideo = (src, onProgress) => withTimeout(new Promise((resolve) => {
+            const source = document.querySelector(`video source[src="${src}"]`);
+            const video = source?.parentElement || document.createElement('video');
+            let resolved = false;
+            let loadedDataTimer = null;
+            let blobUrl = null;
+
+            const finish = () => {
+                if (resolved) return;
+                resolved = true;
+                if (loadedDataTimer) window.clearTimeout(loadedDataTimer);
+                video.removeEventListener('canplaythrough', finish);
+                video.removeEventListener('canplay', settleSoon);
+                video.removeEventListener('loadeddata', settleSoon);
+                video.removeEventListener('error', finish);
+                resolve();
+            };
+
+            const settleSoon = () => {
+                if (video.readyState >= 4) {
+                    finish();
+                    return;
+                }
+
+                if (!loadedDataTimer) {
+                    loadedDataTimer = window.setTimeout(finish, 2800);
+                }
+            };
+
+            const prepareVideoElement = () => {
+                video.preload = 'auto';
+                video.muted = true;
+                video.playsInline = true;
+
+                if (!source && !video.getAttribute('src')) {
+                    video.src = src;
+                }
+
+                if (video.readyState >= 4) {
+                    finish();
+                    return;
+                }
+
+                video.addEventListener('canplaythrough', finish, { once: true });
+                video.addEventListener('canplay', settleSoon, { once: true });
+                video.addEventListener('loadeddata', settleSoon, { once: true });
+                video.addEventListener('error', finish, { once: true });
+                video.load();
+            };
+
+            if (window.URL && window.URL.createObjectURL) {
+                requestVideoBlob(src, onProgress)
+                    .then((blob) => {
+                        blobUrl = URL.createObjectURL(blob);
+                        if (source) {
+                            source.setAttribute('src', blobUrl);
+                        } else {
+                            video.src = blobUrl;
+                        }
+                        window.__scapesyncPreloadedVideo = blobUrl;
+                        prepareVideoElement();
+                    })
+                    .catch(() => {
+                        if (blobUrl) URL.revokeObjectURL(blobUrl);
+                        prepareVideoElement();
+                    });
+                return;
+            }
+
+            prepareVideoElement();
+        }), 120000);
+
+        const preloadOne = (asset, index) => {
+            const task = asset.type === 'video'
+                ? preloadVideo(asset.src, (progress) => updateAssetProgress(index, progress))
+                : preloadImage(asset.src);
+
+            return task.catch(() => undefined).then(() => {
+                updateAssetProgress(index, 1);
+            });
+        };
+
+        const completePreload = () => {
+            setProgress(1);
+            const elapsed = performance.now() - startedAt;
+            const wait = Math.max(0, minVisibleMs - elapsed);
+
+            window.setTimeout(() => {
+                loader.setAttribute('aria-hidden', 'true');
+                loader.classList.add('is-revealing');
+                try {
+                    sessionStorage.setItem(preloadSessionKey, '1');
+                } catch (error) {
+                    // Ignore session storage failures.
+                }
+                if (shell) {
+                    shell.style.opacity = '0';
+                    shell.style.filter = 'blur(10px)';
+                    shell.style.transform = 'translateY(-14px) scale(1.035)';
+                }
+                preloadTiles.forEach((tile) => {
+                    tile.style.opacity = '0';
+                    tile.style.transform = 'translate3d(var(--reveal-x), var(--reveal-y), 120px) scale(0.18) rotateZ(var(--reveal-rotate))';
+                    tile.style.transitionDuration = '820ms';
+                });
+                window.setTimeout(() => {
+                    doc.classList.remove('is-preloading');
+                    loader.style.opacity = '0';
+                    loader.style.visibility = 'hidden';
+                    loader.style.pointerEvents = 'none';
+                    window.setTimeout(() => loader.remove(), 820);
+                }, 520);
+            }, wait);
+        };
+
+        setProgress(0);
+        Promise.all(preloadAssets.map(preloadOne)).then(completePreload);
+    })();
+</script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const reducedMotion = false;
