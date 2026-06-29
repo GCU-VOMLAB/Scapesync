@@ -17,19 +17,29 @@
     var ambientFrame = null;
     var reducedMotion = false;
 
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function smoothstep(value) {
+      return value * value * (3 - 2 * value);
+    }
+
     function clearAmbientTile(tile) {
       tile.classList.remove("is-near");
       tile.style.removeProperty("--tile-z");
       tile.style.removeProperty("--tile-rx");
       tile.style.removeProperty("--tile-ry");
+      tile.style.removeProperty("--tile-hue");
       tile.style.removeProperty("--tile-alpha");
       tile.style.removeProperty("--tile-border");
       tile.style.removeProperty("--tile-opacity");
       tile.style.removeProperty("--tile-glow");
+      tile.style.removeProperty("--tile-inner-glow");
     }
 
     function rebuildAmbientTiles() {
-      var targetSize = window.innerWidth < 768 ? 32 : 52;
+      var targetSize = window.innerWidth < 768 ? 30 : 48;
       ambientColumns = Math.max(1, Math.ceil(window.innerWidth / targetSize));
       ambientRows = Math.max(1, Math.ceil(window.innerHeight / targetSize));
       ambientCellWidth = window.innerWidth / ambientColumns;
@@ -63,8 +73,8 @@
         return;
       }
 
-      var reach = window.innerWidth < 768 ? 138 : 178;
-      var maxDepth = window.innerWidth < 768 ? 34 : 54;
+      var pointerReach = window.innerWidth < 768 ? 166 : 226;
+      var maxDepth = window.innerWidth < 768 ? 48 : 78;
 
       ambientTiles.forEach(function (tile, index) {
         var column = index % ambientColumns;
@@ -74,24 +84,32 @@
         var dx = mouseX - centerX;
         var dy = mouseY - centerY;
         var distance = Math.hypot(dx, dy);
+        var pointerIntensity = 0;
 
-        if (distance > reach) {
+        if (distance <= pointerReach) {
+          pointerIntensity = smoothstep(1 - distance / pointerReach);
+        }
+
+        var intensity = clamp(pointerIntensity, 0, 1);
+
+        if (intensity < 0.014) {
           clearAmbientTile(tile);
           return;
         }
 
-        var falloff = 1 - distance / reach;
-        var intensity = falloff * falloff * (3 - 2 * falloff);
         var depth = 1.5 + intensity * maxDepth;
+        var hue = 184 + clamp(intensity, 0, 1) * 62;
 
         tile.classList.add("is-near");
         tile.style.setProperty("--tile-z", depth.toFixed(1) + "px");
-        tile.style.setProperty("--tile-rx", ((-dy / reach) * 7 * intensity).toFixed(2) + "deg");
-        tile.style.setProperty("--tile-ry", ((dx / reach) * 7 * intensity).toFixed(2) + "deg");
-        tile.style.setProperty("--tile-alpha", (0.026 + intensity * 0.13).toFixed(3));
-        tile.style.setProperty("--tile-border", (0.045 + intensity * 0.36).toFixed(3));
-        tile.style.setProperty("--tile-opacity", (0.54 + intensity * 0.46).toFixed(3));
-        tile.style.setProperty("--tile-glow", (intensity * 26).toFixed(1));
+        tile.style.setProperty("--tile-rx", ((-dy / pointerReach) * 8.5 * intensity).toFixed(2) + "deg");
+        tile.style.setProperty("--tile-ry", ((dx / pointerReach) * 8.5 * intensity).toFixed(2) + "deg");
+        tile.style.setProperty("--tile-hue", hue.toFixed(1));
+        tile.style.setProperty("--tile-alpha", (0.024 + intensity * 0.15).toFixed(3));
+        tile.style.setProperty("--tile-border", (0.045 + intensity * 0.42).toFixed(3));
+        tile.style.setProperty("--tile-opacity", (0.5 + intensity * 0.5).toFixed(3));
+        tile.style.setProperty("--tile-glow", (intensity * 38).toFixed(1));
+        tile.style.setProperty("--tile-inner-glow", (intensity * 24).toFixed(1));
       });
     }
 
@@ -105,6 +123,13 @@
     rebuildAmbientTiles();
 
     window.addEventListener("mousemove", function (event) {
+      if (reducedMotion) return;
+      mouseX = event.clientX;
+      mouseY = event.clientY;
+      queueAmbientUpdate();
+    }, { passive: true });
+
+    window.addEventListener("pointermove", function (event) {
       if (reducedMotion) return;
       mouseX = event.clientX;
       mouseY = event.clientY;
