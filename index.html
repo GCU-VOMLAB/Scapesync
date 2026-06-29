@@ -174,11 +174,9 @@
         .glass-panel {
             opacity: 0;
             transform: translate3d(0, 34px, -90px) scale(0.92);
-            filter: blur(10px);
             transition:
                 opacity 0.8s ease,
-                transform 0.95s cubic-bezier(0.16, 1, 0.3, 1),
-                filter 0.8s ease;
+                transform 0.95s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .scroll-reveal {
@@ -187,28 +185,24 @@
             --assembly-z: -120px;
             --assembly-scale: 0.86;
             --assembly-rotate: 0deg;
-            --assembly-blur: 14px;
             opacity: 0;
             transform:
                 translate3d(var(--assembly-x), var(--assembly-y), var(--assembly-z))
                 scale(var(--assembly-scale))
                 rotateZ(var(--assembly-rotate));
-            filter: blur(var(--assembly-blur));
             transition:
                 opacity 0.82s cubic-bezier(0.16, 1, 0.3, 1),
                 transform 1.12s cubic-bezier(0.16, 1, 0.3, 1),
-                filter 0.88s ease,
                 border-color 520ms ease,
                 background-color 520ms ease,
                 box-shadow 520ms ease;
-            will-change: opacity, transform, filter;
+            will-change: opacity, transform;
         }
 
         .scroll-reveal.visible,
         .mosaic-target.assembled .glass-panel {
             opacity: 1;
             transform: translateY(0) scale(1);
-            filter: blur(0);
         }
 
         .material-symbols-outlined {
@@ -252,6 +246,50 @@
             align-items: center;
         }
 
+        .hero-banner {
+            position: relative;
+            padding-top: var(--nav-h);
+            background: #050a14;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+        }
+
+        .hero-banner-media {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #000;
+        }
+
+        .hero-banner-image {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
+        }
+
+        .about-video-section {
+            position: relative;
+            padding: clamp(64px, 8vw, 112px) clamp(20px, 4.45vw, 64px);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+        }
+
+        .about-video-frame {
+            width: min(1440px, 100%);
+            margin-inline: auto;
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+            background: #000;
+            border: 1px solid rgba(219, 252, 255, 0.22);
+            box-shadow: 0 32px 100px rgba(0, 0, 0, 0.34);
+        }
+
+        .about-video-frame video {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
         .section-intro .section-card {
             width: 100%;
             min-height: min(56vh, 520px);
@@ -282,7 +320,6 @@
             transition:
                 opacity 0.82s cubic-bezier(0.16, 1, 0.3, 1),
                 transform 1.12s cubic-bezier(0.16, 1, 0.3, 1),
-                filter 0.88s ease,
                 border-color 520ms ease,
                 background-color 520ms ease,
                 box-shadow 520ms ease;
@@ -412,12 +449,11 @@
             object-fit: cover;
             transform: scale(1.12);
             transform-origin: center;
-            filter: saturate(0.58) contrast(1.08) brightness(0.78) blur(5px);
+            filter: saturate(0.72) contrast(1.1) brightness(0.86);
             mix-blend-mode: luminosity;
             transition:
-                transform 980ms cubic-bezier(0.16, 1, 0.3, 1),
-                filter 880ms ease;
-            will-change: transform, filter;
+                transform 980ms cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform;
         }
 
         .data-card.visible .data-thumb::after {
@@ -427,13 +463,11 @@
 
         .data-card.visible .data-thumb img {
             transform: scale(1);
-            filter: saturate(0.72) contrast(1.1) brightness(0.86) blur(0);
         }
 
         .data-card:hover .data-thumb img,
         .data-card.is-hovered .data-thumb img {
             transform: scale(1.04) translateZ(0);
-            filter: saturate(1) contrast(1.08) brightness(0.98);
         }
 
         .metric-strip {
@@ -497,7 +531,23 @@
             opacity: 0;
             pointer-events: none;
             transform-style: preserve-3d;
-            will-change: opacity, transform, filter;
+            will-change: opacity, transform;
+        }
+
+        .mosaic-story.media-only .mosaic-deck {
+            width: min(1440px, calc(100% - clamp(40px, 8vw, 112px)));
+            height: min(78vh, 820px);
+        }
+
+        .mosaic-story.media-only .mosaic-story-card {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+
+        .mosaic-story.media-only .mosaic-media {
+            width: min(1360px, 100%);
+            aspect-ratio: 16 / 9;
+            margin-inline: auto;
         }
 
         .mosaic-story-card::before {
@@ -534,7 +584,6 @@
             z-index: 2;
             opacity: var(--copy-solid, 1);
             transform: translate3d(var(--copy-x, 0), 0, 0);
-            filter: blur(var(--copy-blur, 0));
         }
 
         .mosaic-kicker {
@@ -574,7 +623,8 @@
             transform-style: preserve-3d;
         }
 
-        .mosaic-media > img {
+        .mosaic-media > img,
+        .mosaic-media > video {
             position: absolute;
             inset: 0;
             width: 100%;
@@ -582,12 +632,9 @@
             object-fit: cover;
             opacity: var(--image-opacity);
             transform: scale(var(--image-scale));
-            filter: saturate(0.72) contrast(1.1) brightness(0.82) blur(2px);
+            filter: saturate(0.72) contrast(1.1) brightness(0.82);
             mix-blend-mode: luminosity;
-            transition:
-                opacity 140ms linear,
-                transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
-                filter 180ms ease;
+            will-change: opacity, transform;
         }
 
         .mosaic-pieces {
@@ -607,18 +654,10 @@
             background-image: var(--piece-image);
             background-size: var(--piece-size);
             background-position: var(--piece-position);
-            opacity: var(--piece-opacity, 0);
-            transform:
-                translate3d(var(--piece-x, 0), var(--piece-y, 0), var(--piece-z, 0))
-                scale(var(--piece-scale, 1))
-                rotateZ(var(--piece-rotate, 0));
-            filter: brightness(var(--piece-brightness, 0.72)) saturate(var(--piece-saturation, 0.7));
-            box-shadow: inset 0 0 0 1px rgba(219, 252, 255, var(--piece-line, 0.05));
-            transition:
-                opacity 120ms linear,
-                transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
-                filter 160ms ease;
-            will-change: opacity, transform, filter;
+            opacity: 0;
+            transform: translate3d(0, 0, 0) scale(1) rotateZ(0deg);
+            box-shadow: inset 0 0 0 1px rgba(219, 252, 255, 0.05);
+            will-change: opacity, transform;
         }
 
         .mosaic-status {
@@ -689,15 +728,16 @@
 
         .mosaic-fill {
             position: absolute;
-            inset: 0 auto 0 0;
-            width: 0%;
-            min-width: 2px;
+            inset: 0;
             background:
                 linear-gradient(90deg, rgba(0, 240, 255, 0.96), rgba(113, 248, 228, 0.78) 55%, rgba(208, 188, 255, 0.92)),
                 repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.34) 0 1px, transparent 1px calc(100% / 12));
             box-shadow:
                 0 0 22px rgba(0, 240, 255, 0.42),
                 inset 0 0 18px rgba(255, 255, 255, 0.16);
+            transform: scaleX(var(--mosaic-progress, 0));
+            transform-origin: left center;
+            will-change: transform;
             z-index: 1;
         }
 
@@ -761,78 +801,6 @@
             }
         }
 
-        @media (prefers-reduced-motion: reduce) {
-            html {
-                scroll-behavior: auto;
-            }
-
-            .hero-tile,
-            .scroll-reveal,
-            .glass-panel,
-            .section-card,
-            .data-card,
-            .section-tile,
-            .data-thumb,
-            .data-thumb::after,
-            .data-thumb img,
-            .mosaic-story-card,
-            .mosaic-piece,
-            .mosaic-media > img {
-                animation: none !important;
-                transition-duration: 0.01ms !important;
-            }
-
-            .scroll-reveal,
-            .glass-panel,
-            .section-card,
-            .data-card,
-            .section-tile,
-            .mosaic-story-card,
-            .mosaic-piece {
-                opacity: 1 !important;
-                transform: none !important;
-                filter: none !important;
-            }
-
-            .data-thumb::after {
-                opacity: 0.22 !important;
-                transform: none !important;
-            }
-
-            .mosaic-story {
-                min-height: auto !important;
-                padding: 40px 0;
-            }
-
-            .mosaic-stage {
-                position: relative;
-                top: auto;
-                min-height: auto;
-                overflow: visible;
-            }
-
-            .mosaic-deck {
-                height: auto;
-                display: grid;
-                gap: 24px;
-            }
-
-            .mosaic-story-card {
-                position: relative;
-                pointer-events: auto;
-            }
-
-            .mosaic-status {
-                position: relative;
-                left: auto;
-                bottom: auto;
-                transform: none;
-                width: min(1320px, calc(100% - 40px));
-                margin: 24px auto 0;
-                display: flex;
-            }
-        }
-
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -864,31 +832,9 @@
 </nav>
 
 <main class="relative z-10">
-<section class="mosaic-target relative min-h-[88vh] w-full flex items-center overflow-hidden pt-28 pb-16 border-b border-primary/20" id="top">
-<div class="absolute inset-0 z-0">
-<img alt="SCAPESYNC photomosaic terrain preview" class="w-full h-full object-cover mix-blend-luminosity opacity-80" src="assets/scapesync_test.png"/>
-<div class="absolute inset-0 bg-surface/70"></div>
-<div id="hero-mosaic-overlay"></div>
-</div>
-<div class="relative z-10 w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
-<div class="glass-panel p-8 md:p-16 max-w-3xl border-l-4 border-l-primary inline-block bg-surface/90 border-2 border-primary/40 hover:border-primary hover:shadow-[0_0_20px_rgba(0,240,255,0.15)] transition-all duration-300">
-<p class="font-data-label text-data-label text-tertiary mb-5">COLLECTIVE LANDSCAPE SYSTEM</p>
-<h1 class="font-headline-xl text-headline-xl md:text-[80px] md:leading-[80px] text-primary mb-6 font-['Geist'] uppercase">
-                    SCAPESYNC
-                </h1>
-<p class="font-body-md text-body-md md:text-lg text-on-surface-variant max-w-xl">
-                    [ SYS.INIT ] Individual data fragments gather, align, and resolve into one living photomosaic landscape.
-                </p>
-<div class="mt-8 flex gap-3" aria-hidden="true">
-<div class="h-8 w-8 border border-primary/40 bg-primary/10 hover:bg-primary/40 hover:border-primary transition-all"></div>
-<div class="h-8 w-8 border border-tertiary/40 bg-tertiary/10 hover:bg-tertiary/30 hover:border-tertiary transition-all"></div>
-<div class="h-8 w-8 border border-secondary/40 bg-secondary/10 hover:bg-secondary/30 hover:border-secondary transition-all"></div>
-</div>
-</div>
-</div>
-<div class="absolute bottom-8 right-margin-mobile md:right-margin-desktop hidden md:flex flex-col items-start z-10">
-<span class="font-data-label text-data-label text-primary/70 mb-2">SCROLL_DOWN</span>
-<div class="w-[2px] h-12 bg-primary"></div>
+<section class="hero-banner" id="top">
+<div class="hero-banner-media">
+<img alt="SCAPESYNC photomosaic terrain preview" class="hero-banner-image" src="docs/resource/scapesync_banner.jpg"/>
 </div>
 </section>
 
@@ -904,38 +850,11 @@
 </article>
 </section>
 
-<section class="mosaic-story" data-mosaic-story data-section="about" aria-label="About content sequence">
-<div class="mosaic-stage">
-<div class="mosaic-deck">
-<article class="mosaic-story-card" data-i="0">
-<div class="mosaic-copy-panel">
-<p class="mosaic-kicker">ABOUT_DATA_01</p>
-<h3>Visitor Snapshot</h3>
-<p>A captured view becomes one addressable tile in the collective mosaic.</p>
-<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>SOURCE PHOTO</span><span>SYNC 94%</span></div>
-</div>
-<div class="mosaic-media">
-<img alt="Visitor snapshot data tile" src="assets/scapesync_test.png"/>
-<div class="mosaic-pieces" aria-hidden="true"></div>
-</div>
-</article>
-<article class="mosaic-story-card" data-i="1">
-<div class="mosaic-copy-panel">
-<p class="mosaic-kicker text-secondary">ABOUT_DATA_02</p>
-<h3>Telemetry Slice</h3>
-<p>Environmental readings modulate the same visual field without breaking the grid.</p>
-<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>HUMIDITY 62%</span><span>WIND 4.8M/S</span></div>
-</div>
-<div class="mosaic-media">
-<img alt="Telemetry data tile" src="assets/scapesync_test.png"/>
-<div class="mosaic-pieces" aria-hidden="true"></div>
-</div>
-</article>
-</div>
-<div class="mosaic-status" aria-hidden="true">
-<div class="mosaic-num">01/02</div>
-<div class="mosaic-rail"><div class="mosaic-fill"></div></div>
-</div>
+<section class="about-video-section" aria-label="SCAPESYNC about video">
+<div class="about-video-frame">
+<video aria-label="SCAPESYNC about video" autoplay muted loop playsinline preload="metadata">
+<source src="docs/resource/Scapesync_about_video.mp4" type="video/mp4"/>
+</video>
 </div>
 </section>
 
@@ -957,30 +876,102 @@
 <article class="mosaic-story-card" data-i="0">
 <div class="mosaic-copy-panel">
 <p class="mosaic-kicker">DESIGN_DATA_01</p>
-<h3>Tile Atlas</h3>
-<p>Repeated image modules create a readable terrain from many local details.</p>
-<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>GRID 6X5</span><span>DEPTH ON</span></div>
+<h3>Visual Field 01</h3>
+<p>Photographic fragments resolve into a single spatial image while preserving the feeling of many local memories.</p>
+<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>MOSAIC IMAGE</span><span>FIELD 01</span></div>
 </div>
 <div class="mosaic-media">
-<img alt="Tile atlas data tile" src="assets/scapesync_test.png"/>
+<img alt="SCAPESYNC design visual field 01" src="docs/resource/Scapesync_design_1.jpeg"/>
 <div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
 <article class="mosaic-story-card" data-i="1">
 <div class="mosaic-copy-panel">
 <p class="mosaic-kicker text-secondary">DESIGN_DATA_02</p>
-<h3>Composition Grid</h3>
-<p>Cards, metrics, and image fragments align to the same spatial rhythm.</p>
-<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>LOCKED TILES</span><span>HOVER Z</span></div>
+<h3>Visual Field 02</h3>
+<p>The system keeps the image readable at distance, then reveals its tile logic as the viewer moves closer.</p>
+<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>MOSAIC IMAGE</span><span>FIELD 02</span></div>
 </div>
 <div class="mosaic-media">
-<img alt="Composition grid data tile" src="assets/scapesync_test.png"/>
+<img alt="SCAPESYNC design visual field 02" src="docs/resource/Scapesync_design_2.jpeg"/>
+<div class="mosaic-pieces" aria-hidden="true"></div>
+</div>
+</article>
+<article class="mosaic-story-card" data-i="2">
+<div class="mosaic-copy-panel">
+<p class="mosaic-kicker">DESIGN_DATA_03</p>
+<h3>Visual Field 03</h3>
+<p>Each scene can act as both an image surface and a data surface for synchronized public display.</p>
+<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>MOSAIC IMAGE</span><span>FIELD 03</span></div>
+</div>
+<div class="mosaic-media">
+<img alt="SCAPESYNC design visual field 03" src="docs/resource/Scapesync_design_3.png"/>
+<div class="mosaic-pieces" aria-hidden="true"></div>
+</div>
+</article>
+<article class="mosaic-story-card" data-i="3">
+<div class="mosaic-copy-panel">
+<p class="mosaic-kicker text-secondary">DESIGN_DATA_04</p>
+<h3>Visual Field 04</h3>
+<p>Layered tiles make the final composition feel assembled, not simply displayed.</p>
+<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>MOSAIC IMAGE</span><span>FIELD 04</span></div>
+</div>
+<div class="mosaic-media">
+<img alt="SCAPESYNC design visual field 04" src="docs/resource/Scapesync_design_4.png"/>
+<div class="mosaic-pieces" aria-hidden="true"></div>
+</div>
+</article>
+<article class="mosaic-story-card" data-i="4">
+<div class="mosaic-copy-panel">
+<p class="mosaic-kicker">DESIGN_DATA_05</p>
+<h3>Visual Field 05</h3>
+<p>The grid becomes a flexible frame for places, people, and environmental traces.</p>
+<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>MOSAIC IMAGE</span><span>FIELD 05</span></div>
+</div>
+<div class="mosaic-media">
+<img alt="SCAPESYNC design visual field 05" src="docs/resource/Scapesync_design_5.png"/>
+<div class="mosaic-pieces" aria-hidden="true"></div>
+</div>
+</article>
+<article class="mosaic-story-card" data-i="5">
+<div class="mosaic-copy-panel">
+<p class="mosaic-kicker text-secondary">DESIGN_DATA_06</p>
+<h3>Visual Field 06</h3>
+<p>Large-scale imagery stays coherent while tile-level variation keeps the surface active.</p>
+<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>MOSAIC IMAGE</span><span>FIELD 06</span></div>
+</div>
+<div class="mosaic-media">
+<img alt="SCAPESYNC design visual field 06" src="docs/resource/Scapesync_design_6.png"/>
+<div class="mosaic-pieces" aria-hidden="true"></div>
+</div>
+</article>
+<article class="mosaic-story-card" data-i="6">
+<div class="mosaic-copy-panel">
+<p class="mosaic-kicker">DESIGN_DATA_07</p>
+<h3>Visual Field 07</h3>
+<p>Repeated fragments create rhythm across the display without losing the identity of the source scene.</p>
+<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>MOSAIC IMAGE</span><span>FIELD 07</span></div>
+</div>
+<div class="mosaic-media">
+<img alt="SCAPESYNC design visual field 07" src="docs/resource/Scapesync_design_7.png"/>
+<div class="mosaic-pieces" aria-hidden="true"></div>
+</div>
+</article>
+<article class="mosaic-story-card" data-i="7">
+<div class="mosaic-copy-panel">
+<p class="mosaic-kicker text-secondary">DESIGN_DATA_08</p>
+<h3>Visual Field 08</h3>
+<p>The design language supports changing content while keeping one recognizable SCAPESYNC structure.</p>
+<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>MOSAIC IMAGE</span><span>FIELD 08</span></div>
+</div>
+<div class="mosaic-media">
+<img alt="SCAPESYNC design visual field 08" src="docs/resource/Scapesync_design_8.png"/>
 <div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
 </div>
 <div class="mosaic-status" aria-hidden="true">
-<div class="mosaic-num">01/02</div>
+<div class="mosaic-num">01/08</div>
 <div class="mosaic-rail"><div class="mosaic-fill"></div></div>
 </div>
 </div>
@@ -998,36 +989,30 @@
 </article>
 </section>
 
-<section class="mosaic-story" data-mosaic-story data-section="technology" aria-label="Technology content sequence">
+<section class="mosaic-story media-only" data-mosaic-story data-section="technology" aria-label="Technology content sequence">
 <div class="mosaic-stage">
 <div class="mosaic-deck">
 <article class="mosaic-story-card" data-i="0">
-<div class="mosaic-copy-panel">
-<p class="mosaic-kicker">TECH_DATA_01</p>
-<h3>Depth Response</h3>
-<p>Pointer proximity creates a soft Z-axis ripple across the digital tile field.</p>
-<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>MAX Z 54PX</span><span>SCATTER 0</span></div>
-</div>
 <div class="mosaic-media">
-<img alt="Depth response data tile" src="assets/scapesync_test.png"/>
+<img alt="SCAPESYNC technology visual 01" src="docs/resource/scapesync_technology_2.jpg"/>
 <div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
 <article class="mosaic-story-card" data-i="1">
-<div class="mosaic-copy-panel">
-<p class="mosaic-kicker text-secondary">TECH_DATA_02</p>
-<h3>Assembly Runtime</h3>
-<p>Scroll triggers reveal each section as a local sync event in the larger system.</p>
-<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>LATENCY 12MS</span><span>QUEUE 128</span></div>
-</div>
 <div class="mosaic-media">
-<img alt="Assembly runtime data tile" src="assets/scapesync_test.png"/>
+<img alt="SCAPESYNC technology visual 02" src="docs/resource/scapesync_technology_3.jpg"/>
+<div class="mosaic-pieces" aria-hidden="true"></div>
+</div>
+</article>
+<article class="mosaic-story-card" data-i="2">
+<div class="mosaic-media">
+<img alt="SCAPESYNC technology visual 03" src="docs/resource/scapesync_technology_4.jpg"/>
 <div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
 </div>
 <div class="mosaic-status" aria-hidden="true">
-<div class="mosaic-num">01/02</div>
+<div class="mosaic-num">01/03</div>
 <div class="mosaic-rail"><div class="mosaic-fill"></div></div>
 </div>
 </div>
@@ -1037,6 +1022,8 @@
 <script src="assets/scapesync-ambient.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        const reducedMotion = false;
+
         const heroOverlay = document.getElementById('hero-mosaic-overlay');
         if (heroOverlay) {
             for (let i = 0; i < 100; i += 1) {
@@ -1066,6 +1053,7 @@
 
         document.querySelectorAll('.section-card, .data-card').forEach((card) => {
             card.addEventListener('mousemove', (event) => {
+                if (reducedMotion) return;
                 card.classList.add('is-hovered');
                 const rect = card.getBoundingClientRect();
                 card.style.setProperty('--card-x', `${event.clientX - rect.left}px`);
@@ -1079,6 +1067,7 @@
 
         document.querySelectorAll('.sync-section').forEach((section) => {
             section.addEventListener('mousemove', (event) => {
+                if (reducedMotion) return;
                 section.classList.add('is-hovered');
                 const rect = section.getBoundingClientRect();
                 const x = (event.clientX - rect.left) / rect.width - 0.5;
@@ -1111,10 +1100,49 @@
                 element.style.setProperty('--assembly-z', `${isSectionCard ? -180 : -250}px`);
                 element.style.setProperty('--assembly-scale', isSectionCard ? '0.84' : '0.78');
                 element.style.setProperty('--assembly-rotate', `${direction * (isSectionCard ? 2.4 : 4.8)}deg`);
-                element.style.setProperty('--assembly-blur', isSectionCard ? '10px' : '16px');
                 element.style.transitionDelay = `${delay}ms`;
             });
         });
+
+        const sectionNavLinks = Array.from(document.querySelectorAll('.sc-nav-link[href^="#"]'));
+        const trackedSections = sectionNavLinks
+            .map((link) => ({
+                link,
+                section: document.querySelector(link.getAttribute('href'))
+            }))
+            .filter((item) => item.section);
+
+        const updateSectionNav = () => {
+            if (!trackedSections.length) return;
+
+            const navHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 80;
+            const threshold = window.scrollY + navHeight + Math.max(120, window.innerHeight * 0.28);
+            let activeItem = trackedSections[0];
+
+            trackedSections.forEach((item) => {
+                if (item.section.offsetTop <= threshold) {
+                    activeItem = item;
+                }
+            });
+
+            sectionNavLinks.forEach((link) => {
+                link.classList.toggle('active', link === activeItem.link);
+            });
+        };
+
+        let sectionNavFrame = null;
+        const queueSectionNav = () => {
+            if (sectionNavFrame) return;
+            sectionNavFrame = window.requestAnimationFrame(() => {
+                sectionNavFrame = null;
+                updateSectionNav();
+            });
+        };
+
+        window.addEventListener('scroll', queueSectionNav, { passive: true });
+        window.addEventListener('resize', queueSectionNav, { passive: true });
+        window.addEventListener('hashchange', updateSectionNav);
+        updateSectionNav();
 
         const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
         const ease = (value) => value * value * (3 - 2 * value);
@@ -1122,7 +1150,6 @@
             if (count <= 1) return 0;
             return clamp(progress * (count - 1), 0, count - 1);
         };
-
         const seeded = (seed) => {
             const x = Math.sin(seed * 999.7) * 10000;
             return x - Math.floor(x);
@@ -1135,8 +1162,8 @@
             const holder = media.querySelector('.mosaic-pieces');
             if (!img || !holder) return [];
 
-            const cols = 10;
-            const rows = 8;
+            const cols = 8;
+            const rows = 6;
             const total = cols * rows;
             const src = img.getAttribute('src');
             const maxDistance = Math.hypot((cols - 1) / 2, (rows - 1) / 2);
@@ -1174,7 +1201,6 @@
                     piece.style.setProperty('--piece-image', `url("${src}")`);
                     piece.style.setProperty('--piece-size', `${cols * 100}% ${rows * 100}%`);
                     piece.style.setProperty('--piece-position', `${posX.toFixed(4)}% ${posY.toFixed(4)}%`);
-                    piece.style.setProperty('--piece-opacity', '0');
                     holder.appendChild(piece);
                 }
             }
@@ -1213,16 +1239,33 @@
                 const fromZ = Number(piece.dataset.fromZ) || 0;
                 const fromRotate = Number(piece.dataset.fromRotate) || 0;
                 const fromScale = Number(piece.dataset.fromScale) || 1;
+                const opacityValue = fade.toFixed(3);
+                const transformValue = `translate3d(${(fromX * (1 - local)).toFixed(2)}px, ${(fromY * (1 - local)).toFixed(2)}px, ${(fromZ * (1 - local)).toFixed(2)}px) scale(${(fromScale + (1 - fromScale) * local).toFixed(4)}) rotateZ(${(fromRotate * (1 - local)).toFixed(2)}deg)`;
 
-                piece.style.setProperty('--piece-opacity', fade.toFixed(3));
-                piece.style.setProperty('--piece-x', `${(fromX * (1 - local)).toFixed(2)}px`);
-                piece.style.setProperty('--piece-y', `${(fromY * (1 - local)).toFixed(2)}px`);
-                piece.style.setProperty('--piece-z', `${(fromZ * (1 - local)).toFixed(2)}px`);
-                piece.style.setProperty('--piece-rotate', `${(fromRotate * (1 - local)).toFixed(2)}deg`);
-                piece.style.setProperty('--piece-scale', `${(fromScale + (1 - fromScale) * local).toFixed(4)}`);
-                piece.style.setProperty('--piece-brightness', `${(0.72 + local * 0.32).toFixed(3)}`);
-                piece.style.setProperty('--piece-saturation', `${(0.7 + local * 0.42).toFixed(3)}`);
-                piece.style.setProperty('--piece-line', `${(0.035 + local * 0.075).toFixed(3)}`);
+                if (piece._mosaicOpacity !== opacityValue) {
+                    piece.style.opacity = opacityValue;
+                    piece._mosaicOpacity = opacityValue;
+                }
+                if (piece._mosaicTransform !== transformValue) {
+                    piece.style.transform = transformValue;
+                    piece._mosaicTransform = transformValue;
+                }
+            });
+        };
+
+        const placeReducedMosaicPieces = (pieces, visible) => {
+            const opacityValue = visible ? '1' : '0';
+            const transformValue = 'translate3d(0, 0, 0) scale(1) rotateZ(0deg)';
+
+            pieces.forEach((piece) => {
+                if (piece._mosaicOpacity !== opacityValue) {
+                    piece.style.opacity = opacityValue;
+                    piece._mosaicOpacity = opacityValue;
+                }
+                if (piece._mosaicTransform !== transformValue) {
+                    piece.style.transform = transformValue;
+                    piece._mosaicTransform = transformValue;
+                }
             });
         };
 
@@ -1241,14 +1284,44 @@
                 const focus = storyFocus(progress, count);
                 const active = clamp(Math.round(focus), 0, count - 1);
                 const inView = rect.top < viewportHeight && rect.bottom > 0;
+                const shouldRender = rect.top < viewportHeight * 1.2 && rect.bottom > -viewportHeight * 0.2;
 
                 story.classList.toggle('is-active', inView);
-                if (fill) fill.style.width = `${(progress * 100).toFixed(2)}%`;
-                if (num) num.textContent = `${String(active + 1).padStart(2, '0')}/${String(count).padStart(2, '0')}`;
+                if (fill) fill.style.setProperty('--mosaic-progress', progress.toFixed(4));
+                if (num && state.active !== active) num.textContent = `${String(active + 1).padStart(2, '0')}/${String(count).padStart(2, '0')}`;
+                if (!shouldRender) return;
 
                 cards.forEach((card, index) => {
                     const delta = index - focus;
                     const abs = Math.abs(delta);
+                    const isActive = index === active;
+                    const media = card.querySelector('.mosaic-media');
+                    const copy = card.querySelector('.mosaic-copy-panel');
+
+                    if (reducedMotion) {
+                        card.classList.toggle('is-current', isActive);
+                        card.style.opacity = isActive ? '1' : '0';
+                        card.style.visibility = isActive ? 'visible' : 'hidden';
+                        card.style.pointerEvents = isActive ? 'auto' : 'none';
+                        card.style.zIndex = isActive ? '80' : '70';
+                        card.style.transform = 'translate3d(0, 0, 0)';
+
+                        if (media) {
+                            media.style.setProperty('--image-opacity', isActive ? '0.32' : '0');
+                            media.style.setProperty('--image-scale', '1');
+                        }
+
+                        if (copy) {
+                            copy.style.setProperty('--copy-solid', isActive ? '1' : '0');
+                            copy.style.setProperty('--copy-x', '0px');
+                            copy.style.setProperty('--copy-grain', '0');
+                            copy.style.setProperty('--copy-grain-x', '0px');
+                        }
+
+                        placeReducedMosaicPieces(piecesByCard[index], isActive);
+                        return;
+                    }
+
                     const opacity = 1 - clamp((abs - 0.34) / 0.72, 0, 1);
                     const exit = delta < 0 ? clamp(-delta, 0, 1.35) : 0;
                     const incoming = delta > 0 ? clamp(delta, 0, 1.2) : 0;
@@ -1256,19 +1329,15 @@
                     const y = delta * viewportHeight * 0.9;
                     const scale = 1 - Math.min(abs * 0.055, 0.1);
                     const rotate = -exit * 1.8 + incoming * 0.8;
-                    const blur = Math.min(abs * 7.5, 10);
                     const assemble = clamp(1 - abs / 0.86, 0, 1);
                     const copyGather = ease(assemble);
-                    const media = card.querySelector('.mosaic-media');
-                    const copy = card.querySelector('.mosaic-copy-panel');
 
-                    card.classList.toggle('is-current', index === active);
+                    card.classList.toggle('is-current', isActive);
                     card.style.opacity = opacity.toFixed(3);
                     card.style.visibility = opacity > 0.015 ? 'visible' : 'hidden';
                     card.style.pointerEvents = abs < 0.32 ? 'auto' : 'none';
                     card.style.zIndex = String(80 - Math.round(abs * 10));
                     card.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) rotateZ(${rotate.toFixed(2)}deg) scale(${scale.toFixed(4)})`;
-                    card.style.filter = blur > 0.1 ? `blur(${blur.toFixed(2)}px)` : 'none';
 
                     if (media) {
                         media.style.setProperty('--image-opacity', `${(0.12 + assemble * 0.24).toFixed(3)}`);
@@ -1278,7 +1347,6 @@
                     if (copy) {
                         copy.style.setProperty('--copy-solid', `${(opacity * (0.18 + copyGather * 0.82)).toFixed(3)}`);
                         copy.style.setProperty('--copy-x', `${((1 - copyGather) * 42).toFixed(2)}px`);
-                        copy.style.setProperty('--copy-blur', `${((1 - copyGather) * 8).toFixed(2)}px`);
                         copy.style.setProperty('--copy-grain', `${(opacity * (1 - copyGather) * 0.82).toFixed(3)}`);
                         copy.style.setProperty('--copy-grain-x', `${((1 - copyGather) * 24).toFixed(2)}px`);
                     }

@@ -14,6 +14,7 @@
   perspective: 1200px;
   transform-style: preserve-3d;
   opacity: 0.76;
+  contain: layout paint style;
 }
 
 #ambient-tile-field::after {
@@ -155,12 +156,5 @@
   .sc-footer-inner {
     flex-direction: column;
     text-align: center;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ambient-tile {
-    transition-duration: 0.01ms !important;
-    transform: none !important;
   }
 }

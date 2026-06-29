@@ -15,6 +15,7 @@
     var mouseX = -9999;
     var mouseY = -9999;
     var ambientFrame = null;
+    var reducedMotion = false;
 
     function clearAmbientTile(tile) {
       tile.classList.remove("is-near");
@@ -28,7 +29,7 @@
     }
 
     function rebuildAmbientTiles() {
-      var targetSize = window.innerWidth < 768 ? 27 : 30;
+      var targetSize = window.innerWidth < 768 ? 32 : 52;
       ambientColumns = Math.max(1, Math.ceil(window.innerWidth / targetSize));
       ambientRows = Math.max(1, Math.ceil(window.innerHeight / targetSize));
       ambientCellWidth = window.innerWidth / ambientColumns;
@@ -57,6 +58,11 @@
 
     function updateAmbientTiles() {
       ambientFrame = null;
+      if (reducedMotion) {
+        resetAmbientTiles();
+        return;
+      }
+
       var reach = window.innerWidth < 768 ? 138 : 178;
       var maxDepth = window.innerWidth < 768 ? 34 : 54;
 
@@ -90,6 +96,7 @@
     }
 
     function queueAmbientUpdate() {
+      if (reducedMotion) return;
       if (!ambientFrame) {
         ambientFrame = window.requestAnimationFrame(updateAmbientTiles);
       }
@@ -98,6 +105,7 @@
     rebuildAmbientTiles();
 
     window.addEventListener("mousemove", function (event) {
+      if (reducedMotion) return;
       mouseX = event.clientX;
       mouseY = event.clientY;
       queueAmbientUpdate();
@@ -108,6 +116,7 @@
       rebuildAmbientTiles();
       if (mouseX > -1 && mouseY > -1) queueAmbientUpdate();
     }, { passive: true });
+
   }
 
   if (document.readyState === "loading") {
