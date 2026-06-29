@@ -205,7 +205,8 @@
     <div class="panel map-panel">
       <iframe id="contact-map" title="Google map showing Gachon University" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
     </div>
-    <form id="contact-form" class="panel contact-form" novalidate>
+    <form id="contact-form" class="panel contact-form" action="https://formspree.io/f/xgojzayq" method="POST" novalidate>
+      <input type="hidden" name="_subject" value="[SCAPESYNC] Contact mail received"/>
       <div class="form-grid">
         <label>
           <span>Name</span>
@@ -239,6 +240,7 @@
 <script>
 (function(){
   "use strict";
+  var USE_FORMSPREE = "https://formspree.io/f/xgojzayq";
   var TO = "hello@scapesync.p-e.kr";
   var MAP_ADDRESS = "Gachon University, Seongnam, Republic of Korea";
   var map = document.getElementById("contact-map");
@@ -252,18 +254,29 @@
     event.preventDefault();
     var name = form.name.value.trim();
     var email = form.email.value.trim();
-    var org = form.org.value.trim() || "-";
     var message = form.message.value.trim();
     if (!name || !email || !message) {
       note.textContent = "Please fill in your name, email, and message.";
       note.style.color = "#ffb4ab";
       return;
     }
-    var subject = "SCAPESYNC inquiry - " + name;
-    var body = "Name: " + name + "\nEmail: " + email + "\nOrganization: " + org + "\n\n" + message;
-    window.location.href = "mailto:" + TO + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
-    note.textContent = "Opening your email app...";
+    note.textContent = "Sending...";
     note.style.color = "#00f0ff";
+    fetch(USE_FORMSPREE, {
+      method: "POST",
+      headers: { "Accept": "application/json" },
+      body: new FormData(form)
+    })
+      .then(function(response) {
+        if (!response.ok) throw new Error("Formspree request failed");
+        form.reset();
+        note.textContent = "Thanks, your message has been sent.";
+        note.style.color = "#00f0ff";
+      })
+      .catch(function() {
+        note.textContent = "Could not send. Please email " + TO + " directly.";
+        note.style.color = "#ffb4ab";
+      });
   });
 })();
 </script>
