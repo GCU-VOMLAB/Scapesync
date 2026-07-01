@@ -186,6 +186,7 @@
         .section-card,
         .data-card {
             background: rgba(15, 23, 42, 0.82);
+            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(219, 252, 255, 0.2);
             border-radius: 0;
@@ -591,6 +592,7 @@
             padding: clamp(28px, 4vw, 54px);
             background: rgba(15, 23, 42, 0.78);
             border: 1px solid rgba(219, 252, 255, 0.2);
+            -webkit-backdrop-filter: blur(12px);
             backdrop-filter: blur(12px);
             box-shadow: 0 24px 80px rgba(0, 0, 0, 0.24);
         }
@@ -652,6 +654,9 @@
             border: 1px solid rgba(219, 252, 255, 0.22);
             box-shadow: 0 32px 100px rgba(0, 0, 0, 0.34);
             transform-style: preserve-3d;
+            /* Contain the base image's mix-blend-mode so WebKit/Safari blends it
+               only within this box (prevents white/gray blocks). */
+            isolation: isolate;
         }
 
         .mosaic-media > img,
@@ -688,7 +693,8 @@
             opacity: 0;
             transform: translate3d(0, 0, 0) scale(1) rotateZ(0deg);
             box-shadow: inset 0 0 0 1px rgba(219, 252, 255, 0.05);
-            will-change: opacity, transform;
+            /* will-change is toggled in JS per active card (updateMosaicStories)
+               to avoid Safari compositing-layer overload across hundreds of pieces. */
         }
 
         .mosaic-status {
@@ -1885,7 +1891,9 @@
                 piecesByCard,
                 num: story.querySelector('.mosaic-num'),
                 fill: story.querySelector('.mosaic-fill'),
-                active: -1
+                active: -1,
+                wcByCard: [],
+                composited: false
             };
         });
 
@@ -1949,7 +1957,20 @@
                 story.classList.toggle('is-active', inView);
                 if (fill) fill.style.setProperty('--mosaic-progress', progress.toFixed(4));
                 if (num && state.active !== active) num.textContent = `${String(active + 1).padStart(2, '0')}/${String(count).padStart(2, '0')}`;
-                if (!shouldRender) return;
+
+                if (!shouldRender) {
+                    // Story is off-screen: drop all GPU layer hints so Safari can
+                    // release the composited piece layers.
+                    if (state.composited) {
+                        piecesByCard.forEach((pieces, index) => {
+                            pieces.forEach((piece) => { piece.style.willChange = 'auto'; });
+                            state.wcByCard[index] = false;
+                        });
+                        state.composited = false;
+                    }
+                    return;
+                }
+                state.composited = true;
 
                 cards.forEach((card, index) => {
                     const delta = index - focus;
@@ -1957,6 +1978,16 @@
                     const isActive = index === active;
                     const media = card.querySelector('.mosaic-media');
                     const copy = card.querySelector('.mosaic-copy-panel');
+
+                    // Promote only pieces of cards near focus to GPU layers.
+                    // Motion is unchanged (transforms are still written every frame);
+                    // this just caps how many layers WebKit holds at once.
+                    const wantWillChange = abs < 1.6;
+                    if (state.wcByCard[index] !== wantWillChange) {
+                        const willChangeValue = wantWillChange ? 'opacity, transform' : 'auto';
+                        piecesByCard[index].forEach((piece) => { piece.style.willChange = willChangeValue; });
+                        state.wcByCard[index] = wantWillChange;
+                    }
 
                     if (reducedMotion) {
                         card.classList.toggle('is-current', isActive);
