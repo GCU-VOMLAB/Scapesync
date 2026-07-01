@@ -183,6 +183,30 @@
     color: #b9cacb;
     line-height: 1.65;
   }
+  .board-main {
+    min-width: 0;
+  }
+  .board-media {
+    margin-top: 20px;
+    width: min(100%, 920px);
+    overflow: hidden;
+    border: 1px solid rgba(219, 252, 255, .18);
+    background:
+      linear-gradient(rgba(219, 252, 255, .06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(219, 252, 255, .06) 1px, transparent 1px),
+      rgba(4, 11, 25, .84);
+    background-size: 32px 32px, 32px 32px, auto;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.02), 0 24px 70px rgba(0,0,0,.28);
+  }
+  .board-media img,
+  .board-media video {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 68svh;
+    object-fit: contain;
+    background: #050b16;
+  }
   .board-tag {
     border: 1px solid var(--cat-border);
     padding: 9px 12px;
@@ -263,6 +287,33 @@
     });
   }
 
+  function formatBody(value) {
+    return escapeHTML(value).replace(/\n/g, "<br>");
+  }
+
+  function mediaHTML(path, title) {
+    var src = String(path || "").trim();
+    if (!src) return "";
+    src = src.replace(/\\/g, "/");
+    var clean = src.split("?")[0].split("#")[0].toLowerCase();
+    var safeSrc = escapeHTML(src);
+    var safeTitle = escapeHTML(title || "Board media");
+    if (/\.(mp4|webm|ogg|mov)$/.test(clean)) {
+      var type = clean.endsWith(".webm") ? "video/webm" : clean.endsWith(".ogg") ? "video/ogg" : "video/mp4";
+      return [
+        '<figure class="board-media">',
+        '<video controls playsinline preload="metadata" aria-label="' + safeTitle + '">',
+        '<source src="' + safeSrc + '" type="' + type + '">',
+        "</video>",
+        "</figure>"
+      ].join("");
+    }
+    if (/\.(png|jpe?g|gif|webp|avif|svg)$/.test(clean)) {
+      return '<figure class="board-media"><img src="' + safeSrc + '" alt="' + safeTitle + '" loading="lazy"></figure>';
+    }
+    return "";
+  }
+
   function parseCSV(text) {
     text = String(text || "").replace(/^\uFEFF/, "").replace(/\u0000/g, "");
     var rows = [];
@@ -340,9 +391,10 @@
       return [
         '<article class="board-card" data-cat="' + escapeHTML(cat) + '">',
         '<div class="board-date">' + escapeHTML(post.date) + "</div>",
-        "<div>",
+        '<div class="board-main">',
         "<h2>" + escapeHTML(post.title) + "</h2>",
-        "<p>" + escapeHTML(post.body || post.summary || "") + "</p>",
+        "<p>" + formatBody(post.body || post.summary || "") + "</p>",
+        mediaHTML(post.media, post.title),
         "</div>",
         '<span class="board-tag">' + escapeHTML(labels[cat] || cat) + "</span>",
         "</article>"

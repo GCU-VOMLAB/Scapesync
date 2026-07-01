@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>SCAPESYNC | Atmospheric Photomosaic Systems</title>
+<title>SCAPESYNC | Responsive Photomosaic Systems</title>
 <script>
     (() => {
         try {
-            if (sessionStorage.getItem('scapesync-main-assets-ready-v4') === '1') {
+            if (sessionStorage.getItem('scapesync-main-assets-ready-v7') === '1') {
                 document.documentElement.classList.remove('is-preloading');
             }
         } catch (error) {
@@ -570,6 +570,17 @@
             margin-inline: auto;
         }
 
+        .mosaic-story-card.is-media-only {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+
+        .mosaic-story-card.is-media-only .mosaic-media {
+            width: min(1360px, 100%);
+            aspect-ratio: 16 / 9;
+            margin-inline: auto;
+        }
+
         .mosaic-story-card::before {
             display: none;
         }
@@ -1116,7 +1127,13 @@
 <section class="mosaic-story" data-mosaic-story data-section="design" aria-label="Design content sequence">
 <div class="mosaic-stage">
 <div class="mosaic-deck">
-<article class="mosaic-story-card" data-i="0">
+<article class="mosaic-story-card is-media-only" data-i="0">
+<div class="mosaic-media">
+<img alt="SCAPESYNC before and after design visual" src="assets/resource/scapesync_technology_3.jpg"/>
+<div class="mosaic-pieces" aria-hidden="true"></div>
+</div>
+</article>
+<article class="mosaic-story-card" data-i="1">
 <div class="mosaic-copy-panel">
 <p class="mosaic-kicker">DESIGN_01</p>
 <h3>Photomosaic Texture</h3>
@@ -1124,23 +1141,23 @@
 <div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>VISITOR PHOTOS</span><span>LOCAL SCENE</span></div>
 </div>
 <div class="mosaic-media">
-<img alt="SCAPESYNC design visual field 01" src="assets/resource/Scapesync_design_1.jpeg"/>
-<div class="mosaic-pieces" aria-hidden="true"></div>
-</div>
-</article>
-<article class="mosaic-story-card" data-i="1">
-<div class="mosaic-copy-panel">
-<p class="mosaic-kicker text-secondary">DESIGN_02</p>
-<h3>Data-Driven Atmosphere</h3>
-<p>Humidity, wind, waves, air quality, noise, and crowd density reshape light, color, motion, particles, and atmospheric rhythm.</p>
-<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>LIVE DATA</span><span>ATMOSPHERE</span></div>
-</div>
-<div class="mosaic-media">
-<img alt="SCAPESYNC design visual field 02" src="assets/resource/Scapesync_design_2.jpeg"/>
+<img alt="SCAPESYNC design visual field 01" src="assets/resource/Scapesync_design_2.jpeg"/>
 <div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
 <article class="mosaic-story-card" data-i="2">
+<div class="mosaic-copy-panel">
+<p class="mosaic-kicker text-secondary">DESIGN_02</p>
+<h3>Data-Driven Scene</h3>
+<p>Humidity, wind, waves, air quality, noise, and crowd density reshape light, color, motion, particles, and scene rhythm.</p>
+<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>LIVE DATA</span><span>SCENE RHYTHM</span></div>
+</div>
+<div class="mosaic-media">
+<img alt="SCAPESYNC design visual field 02" src="assets/resource/scapesync_technology_2.jpg"/>
+<div class="mosaic-pieces" aria-hidden="true"></div>
+</div>
+</article>
+<article class="mosaic-story-card" data-i="3">
 <div class="mosaic-copy-panel">
 <p class="mosaic-kicker">DESIGN_03</p>
 <h3>Regional Imagination</h3>
@@ -1148,73 +1165,37 @@
 <div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>LANDMARKS</span><span>TRANSFORMED</span></div>
 </div>
 <div class="mosaic-media">
-<img alt="SCAPESYNC design visual field 03" src="assets/resource/Scapesync_design_3.png"/>
-<div class="mosaic-pieces" aria-hidden="true"></div>
-</div>
-</article>
-<article class="mosaic-story-card" data-i="3">
-<div class="mosaic-copy-panel">
-<p class="mosaic-kicker text-secondary">DESIGN_04</p>
-<h3>Layered Spatial Depth</h3>
-<p>Foreground and background layers, camera framing, dynamic lighting, atmospheric depth, and volumetric effects create scale and continuity.</p>
-<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>DEPTH</span><span>CONTINUITY</span></div>
-</div>
-<div class="mosaic-media">
-<img alt="SCAPESYNC design visual field 04" src="assets/resource/Scapesync_design_4.png"/>
+<img alt="SCAPESYNC design visual field 03" src="assets/resource/Scapesync_design_8.png"/>
 <div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
 <article class="mosaic-story-card" data-i="4">
 <div class="mosaic-copy-panel">
-<p class="mosaic-kicker">DESIGN_05</p>
-<h3>Display-Aware Layout</h3>
-<p>Composition adapts to screen resolution, aspect ratio, curvature, viewing distance, and geometry for flat, curved, circular, and facade displays.</p>
-<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>SCREEN META</span><span>ADAPTIVE</span></div>
-</div>
-<div class="mosaic-media">
-<img alt="SCAPESYNC design visual field 05" src="assets/resource/Scapesync_design_5.png"/>
-<div class="mosaic-pieces" aria-hidden="true"></div>
-</div>
-</article>
-<article class="mosaic-story-card" data-i="5">
-<div class="mosaic-copy-panel">
-<p class="mosaic-kicker text-secondary">DESIGN_06</p>
-<h3>Curvature-Aware Flow</h3>
-<p>Geometric correction reduces distortion so clouds, water, light, and animated forms can move naturally across panoramic and non-planar surfaces.</p>
-<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>CURVED MEDIA</span><span>FLOW</span></div>
-</div>
-<div class="mosaic-media">
-<img alt="SCAPESYNC design visual field 06" src="assets/resource/Scapesync_design_6.png"/>
-<div class="mosaic-pieces" aria-hidden="true"></div>
-</div>
-</article>
-<article class="mosaic-story-card" data-i="6">
-<div class="mosaic-copy-panel">
-<p class="mosaic-kicker">DESIGN_07</p>
+<p class="mosaic-kicker text-secondary">DESIGN_04</p>
 <h3>Simple Participation</h3>
 <p>The interface requires no complex controls. Visitors participate by sending photos, and the shared display continuously responds.</p>
 <div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>TEXT PHOTO</span><span>PUBLIC ART</span></div>
 </div>
 <div class="mosaic-media">
-<img alt="SCAPESYNC design visual field 07" src="assets/resource/Scapesync_design_7.png"/>
+<img alt="SCAPESYNC design visual field 04" src="assets/resource/Scapesync_design_7.png"/>
 <div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
-<article class="mosaic-story-card" data-i="7">
+<article class="mosaic-story-card" data-i="5">
 <div class="mosaic-copy-panel">
-<p class="mosaic-kicker text-secondary">DESIGN_08</p>
+<p class="mosaic-kicker">DESIGN_05</p>
 <h3>Replaceable Visual Modules</h3>
 <p>Landscape assets, data sources, mapping rules, and display calibration can be replaced independently while preserving one coherent visual system.</p>
 <div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>MODULAR</span><span>COHERENT</span></div>
 </div>
 <div class="mosaic-media">
-<img alt="SCAPESYNC design visual field 08" src="assets/resource/Scapesync_design_8.png"/>
+<img alt="SCAPESYNC design visual field 05" src="assets/resource/Scapesync_design_6.png"/>
 <div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
 </div>
 <div class="mosaic-status" aria-hidden="true">
-<div class="mosaic-num">01/08</div>
+<div class="mosaic-num">01/06</div>
 <div class="mosaic-rail"><div class="mosaic-fill"></div></div>
 </div>
 </div>
@@ -1232,30 +1213,54 @@
 </article>
 </section>
 
-<section class="mosaic-story media-only" data-mosaic-story data-section="technology" aria-label="Technology content sequence">
+<section class="mosaic-story" data-mosaic-story data-section="technology" aria-label="Technology content sequence">
 <div class="mosaic-stage">
 <div class="mosaic-deck">
 <article class="mosaic-story-card" data-i="0">
+<div class="mosaic-copy-panel">
+<p class="mosaic-kicker text-tertiary">TECH_01</p>
+<h3>Layered Spatial Depth</h3>
+<p>Foreground and background layers, camera framing, dynamic lighting, atmospheric depth, and volumetric effects create scale and continuity.</p>
+<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>DEPTH</span><span>CONTINUITY</span></div>
+</div>
 <div class="mosaic-media">
-<img alt="SCAPESYNC technology visual 01" src="assets/resource/scapesync_technology_2.jpg"/>
+<img alt="SCAPESYNC technology visual 01" src="assets/resource/Scapesync_design_5.png"/>
 <div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
 <article class="mosaic-story-card" data-i="1">
+<div class="mosaic-copy-panel">
+<p class="mosaic-kicker text-tertiary">TECH_02</p>
+<h3>Display-Aware Layout</h3>
+<p>Composition adapts to screen resolution, aspect ratio, curvature, viewing distance, and geometry for flat, curved, circular, and facade displays.</p>
+<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>SCREEN META</span><span>ADAPTIVE</span></div>
+</div>
 <div class="mosaic-media">
-<img alt="SCAPESYNC technology visual 02" src="assets/resource/scapesync_technology_3.jpg"/>
+<img alt="SCAPESYNC technology visual 02" src="assets/resource/Scapesync_design_3.png"/>
 <div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
 <article class="mosaic-story-card" data-i="2">
+<div class="mosaic-copy-panel">
+<p class="mosaic-kicker text-tertiary">TECH_03</p>
+<h3>Parametric Visual Mapping</h3>
+<p>SCAPESYNC translates place data into controllable visual parameters: tile density, object masks, particle behavior, color rhythm, and motion timing.</p>
+<div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>PARAMETERS</span><span>RENDER RULES</span></div>
+</div>
 <div class="mosaic-media">
-<img alt="SCAPESYNC technology visual 03" src="assets/resource/scapesync_technology_4.jpg"/>
+<img alt="SCAPESYNC parametric visual mapping" src="assets/resource/Scapesync_design_4.png"/>
+<div class="mosaic-pieces" aria-hidden="true"></div>
+</div>
+</article>
+<article class="mosaic-story-card is-media-only" data-i="3">
+<div class="mosaic-media">
+<img alt="SCAPESYNC system workflow visual" src="assets/resource/scapesync_technology_4.jpg"/>
 <div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
 </div>
 <div class="mosaic-status" aria-hidden="true">
-<div class="mosaic-num">01/03</div>
+<div class="mosaic-num">01/04</div>
 <div class="mosaic-rail"><div class="mosaic-fill"></div></div>
 </div>
 </div>
@@ -1271,11 +1276,10 @@
 <script src="assets/scapesync-ambient.js"></script>
 <script>
     (() => {
-        const preloadSessionKey = 'scapesync-main-assets-ready-v4';
+        const preloadSessionKey = 'scapesync-main-assets-ready-v7';
         const preloadAssets = [
             { type: 'image', src: 'assets/resource/scapesync_banner.jpg', weight: 3 },
             { type: 'video', src: 'assets/resource/Scapesync_about_video.mp4', weight: 18 },
-            { type: 'image', src: 'assets/resource/Scapesync_design_1.jpeg', weight: 1 },
             { type: 'image', src: 'assets/resource/Scapesync_design_2.jpeg', weight: 1 },
             { type: 'image', src: 'assets/resource/Scapesync_design_3.png', weight: 1 },
             { type: 'image', src: 'assets/resource/Scapesync_design_4.png', weight: 1 },
