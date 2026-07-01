@@ -175,11 +175,12 @@
                 border-color 260ms ease,
                 opacity 260ms ease,
                 box-shadow 260ms ease;
-            will-change: transform;
         }
 
         .ambient-tile.is-near {
             border-color: hsla(var(--tile-hue, 185), 100%, 78%, var(--tile-border, 0.28));
+            /* Promote to a GPU layer only while the tile is actually animating (was on every tile). */
+            will-change: transform;
         }
 
         .glass-panel,
@@ -1670,32 +1671,12 @@
     document.addEventListener('DOMContentLoaded', () => {
         const reducedMotion = false;
 
-        const heroOverlay = document.getElementById('hero-mosaic-overlay');
-        if (heroOverlay) {
-            for (let i = 0; i < 100; i += 1) {
-                const tile = document.createElement('div');
-                tile.className = 'hero-tile';
-                tile.style.transitionDelay = `${(i % 10) * 0.025 + Math.floor(i / 10) * 0.018}s`;
-                heroOverlay.appendChild(tile);
-            }
-        }
+        // Cached layout values — refreshed only on resize via measure(), never per scroll frame.
+        let viewportHeight = window.innerHeight || 1;
+        let navHeightCached = 80;
 
-        document.querySelectorAll('[data-tile-array]').forEach((array) => {
-            for (let i = 0; i < 30; i += 1) {
-                const tile = document.createElement('span');
-                const column = i % 6;
-                const row = Math.floor(i / 6);
-                const fromLeft = column < 3 ? -1 : 1;
-                tile.className = 'section-tile';
-                tile.style.setProperty('--tile-depth', `${10 + column * 5 + row * 2}px`);
-                tile.style.setProperty('--tile-assemble-x', `${fromLeft * (34 + column * 5)}px`);
-                tile.style.setProperty('--tile-assemble-y', `${(row - 2) * 18}px`);
-                tile.style.setProperty('--tile-assemble-z', `${-110 - (i % 5) * 12}px`);
-                tile.style.setProperty('--tile-assemble-rotate', `${(fromLeft * (8 + row * 2)).toFixed(1)}deg`);
-                tile.style.transitionDelay = `${90 + row * 44 + column * 18}ms`;
-                array.appendChild(tile);
-            }
-        });
+        // (Removed dead #hero-mosaic-overlay and [data-tile-array] builders — neither
+        // element exists in the markup, so these loops created zero nodes.)
 
         document.querySelectorAll('.section-card, .data-card').forEach((card) => {
             card.addEventListener('mousemove', (event) => {
@@ -1761,12 +1742,12 @@
         const updateSectionNav = () => {
             if (!trackedSections.length) return;
 
-            const navHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 80;
-            const threshold = window.scrollY + navHeight + Math.max(120, window.innerHeight * 0.28);
+            // navHeightCached / viewportHeight / item.top are cached (measure()); no per-frame layout reads.
+            const threshold = window.scrollY + navHeightCached + Math.max(120, viewportHeight * 0.28);
             let activeItem = trackedSections[0];
 
             trackedSections.forEach((item) => {
-                if (item.section.offsetTop <= threshold) {
+                if (item.top <= threshold) {
                     activeItem = item;
                 }
             });
@@ -1776,19 +1757,8 @@
             });
         };
 
-        let sectionNavFrame = null;
-        const queueSectionNav = () => {
-            if (sectionNavFrame) return;
-            sectionNavFrame = window.requestAnimationFrame(() => {
-                sectionNavFrame = null;
-                updateSectionNav();
-            });
-        };
-
-        window.addEventListener('scroll', queueSectionNav, { passive: true });
-        window.addEventListener('resize', queueSectionNav, { passive: true });
+        // Scroll/resize/init are driven by the unified scheduler at the end of this script.
         window.addEventListener('hashchange', updateSectionNav);
-        updateSectionNav();
 
         const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
         const ease = (value) => value * value * (3 - 2 * value);
@@ -1878,24 +1848,42 @@
         const mosaicStories = Array.from(document.querySelectorAll('[data-mosaic-story]'));
         const mosaicState = mosaicStories.map((story) => {
             const cards = Array.from(story.querySelectorAll('.mosaic-story-card'));
-            const piecesByCard = cards.map((card, index) => {
-                const media = card.querySelector('.mosaic-media');
-                return buildMosaicPieces(media, index);
-            });
+            // Cache per-card element refs once so the scroll loop never re-queries the DOM.
+            const mediaByCard = cards.map((card) => card.querySelector('.mosaic-media'));
+            const copyByCard = cards.map((card) => card.querySelector('.mosaic-copy-panel'));
 
             story.style.setProperty('--story-height', `${Math.max(340, 170 + storyScrollUnits(cards.length) * 128)}svh`);
 
             return {
                 story,
                 cards,
-                piecesByCard,
+                mediaByCard,
+                copyByCard,
+                // Pieces are built lazily the first time the story nears the viewport
+                // (defers ~240 nodes + background-image decodes off the initial load path).
+                piecesByCard: cards.map(() => []),
+                built: false,
                 num: story.querySelector('.mosaic-num'),
                 fill: story.querySelector('.mosaic-fill'),
                 active: -1,
                 wcByCard: [],
-                composited: false
+                lastAssemble: [],
+                composited: false,
+                storyHeight: 0,
+                total: 1
             };
         });
+
+        // Recompute scroll-invariant layout values once, and again only on resize.
+        const measure = () => {
+            viewportHeight = window.innerHeight || 1;
+            navHeightCached = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 80;
+            trackedSections.forEach((item) => { item.top = item.section.offsetTop; });
+            mosaicState.forEach((state) => {
+                state.storyHeight = state.story.offsetHeight;
+                state.total = Math.max(1, state.storyHeight - viewportHeight);
+            });
+        };
 
         const placeMosaicPieces = (pieces, assemble, cardOpacity) => {
             pieces.forEach((piece) => {
@@ -1938,21 +1926,31 @@
         };
 
         const updateMosaicStories = () => {
-            const viewportHeight = window.innerHeight || 1;
+            // Pass 1 — read layout only (no interleaved writes → avoids forced reflow between stories).
+            const frames = mosaicState.map((state) => {
+                const count = state.cards.length;
+                if (!count) return null;
 
-            mosaicState.forEach((state) => {
-                const { story, cards, piecesByCard, num, fill } = state;
-                const count = cards.length;
-                if (!count) return;
-
-                const rect = story.getBoundingClientRect();
-                const total = Math.max(1, story.offsetHeight - viewportHeight);
-                const raw = clamp(-rect.top, 0, total);
-                const progress = raw / total;
+                const rect = state.story.getBoundingClientRect();
+                const raw = clamp(-rect.top, 0, state.total);
+                const progress = raw / state.total;
                 const focus = storyFocus(progress, count);
-                const active = clamp(Math.round(focus), 0, count - 1);
-                const inView = rect.top < viewportHeight && rect.bottom > 0;
-                const shouldRender = rect.top < viewportHeight * 1.2 && rect.bottom > -viewportHeight * 0.2;
+                return {
+                    state,
+                    count,
+                    progress,
+                    focus,
+                    active: clamp(Math.round(focus), 0, count - 1),
+                    inView: rect.top < viewportHeight && rect.bottom > 0,
+                    shouldRender: rect.top < viewportHeight * 1.2 && rect.bottom > -viewportHeight * 0.2
+                };
+            });
+
+            // Pass 2 — writes.
+            frames.forEach((frame) => {
+                if (!frame) return;
+                const { state, count, progress, focus, active, inView, shouldRender } = frame;
+                const { story, cards, mediaByCard, copyByCard, piecesByCard, num, fill } = state;
 
                 story.classList.toggle('is-active', inView);
                 if (fill) fill.style.setProperty('--mosaic-progress', progress.toFixed(4));
@@ -1968,16 +1966,27 @@
                         });
                         state.composited = false;
                     }
+                    state.active = active;
                     return;
                 }
                 state.composited = true;
+
+                // Build this story's mosaic pieces the first time it nears the viewport.
+                // Rebuilt from the same seeded() values, so the assembly motion is identical.
+                if (!state.built) {
+                    cards.forEach((card, index) => {
+                        piecesByCard[index] = buildMosaicPieces(mediaByCard[index], index);
+                    });
+                    state.built = true;
+                }
 
                 cards.forEach((card, index) => {
                     const delta = index - focus;
                     const abs = Math.abs(delta);
                     const isActive = index === active;
-                    const media = card.querySelector('.mosaic-media');
-                    const copy = card.querySelector('.mosaic-copy-panel');
+                    const media = mediaByCard[index];
+                    const copy = copyByCard[index];
+                    const pieces = piecesByCard[index];
 
                     // Promote only pieces of cards near focus to GPU layers.
                     // Motion is unchanged (transforms are still written every frame);
@@ -1985,7 +1994,7 @@
                     const wantWillChange = abs < 1.6;
                     if (state.wcByCard[index] !== wantWillChange) {
                         const willChangeValue = wantWillChange ? 'opacity, transform' : 'auto';
-                        piecesByCard[index].forEach((piece) => { piece.style.willChange = willChangeValue; });
+                        pieces.forEach((piece) => { piece.style.willChange = willChangeValue; });
                         state.wcByCard[index] = wantWillChange;
                     }
 
@@ -2009,7 +2018,7 @@
                             copy.style.setProperty('--copy-grain-x', '0px');
                         }
 
-                        placeReducedMosaicPieces(piecesByCard[index], isActive);
+                        placeReducedMosaicPieces(pieces, isActive);
                         return;
                     }
 
@@ -2042,25 +2051,39 @@
                         copy.style.setProperty('--copy-grain-x', `${((1 - copyGather) * 24).toFixed(2)}px`);
                     }
 
-                    placeMosaicPieces(piecesByCard[index], assemble, opacity);
+                    // Cards with abs >= 0.86 have assemble === 0: their pieces sit fully
+                    // scattered/hidden and do not change frame-to-frame. Once parked, skip
+                    // re-computing them — the resulting frame is byte-identical.
+                    if (!(assemble === 0 && state.lastAssemble[index] === 0)) {
+                        placeMosaicPieces(pieces, assemble, opacity);
+                    }
+                    state.lastAssemble[index] = assemble;
                 });
 
                 state.active = active;
             });
         };
 
-        let mosaicFrame = null;
-        const queueMosaicStories = () => {
-            if (mosaicFrame) return;
-            mosaicFrame = window.requestAnimationFrame(() => {
-                mosaicFrame = null;
-                updateMosaicStories();
-            });
+        // One scroll/resize handler drives BOTH the mosaic engine and the section-nav
+        // highlight through a single rAF (was two independent listeners + two rAFs).
+        let frameQueued = null;
+        const runFrame = () => {
+            frameQueued = null;
+            updateMosaicStories();
+            updateSectionNav();
+        };
+        const queueFrame = () => {
+            if (!frameQueued) frameQueued = window.requestAnimationFrame(runFrame);
         };
 
-        window.addEventListener('scroll', queueMosaicStories, { passive: true });
-        window.addEventListener('resize', queueMosaicStories, { passive: true });
-        updateMosaicStories();
+        window.addEventListener('scroll', queueFrame, { passive: true });
+        window.addEventListener('resize', () => {
+            measure();
+            queueFrame();
+        }, { passive: true });
+
+        measure();
+        runFrame();
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {

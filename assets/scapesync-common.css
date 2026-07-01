@@ -47,11 +47,11 @@
     border-color 260ms ease,
     opacity 260ms ease,
     box-shadow 260ms ease;
-  will-change: transform;
 }
 
 .ambient-tile.is-near {
   border-color: hsla(var(--tile-hue, 185), 100%, 78%, var(--tile-border, 0.28));
+  will-change: transform;
 }
 
 .sc-nav {
