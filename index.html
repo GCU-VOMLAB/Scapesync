@@ -7,7 +7,7 @@
 <script>
     (() => {
         try {
-            if (sessionStorage.getItem('scapesync-main-assets-ready-v7') === '1') {
+            if (sessionStorage.getItem('scapesync-main-assets-ready-v8') === '1') {
                 document.documentElement.classList.remove('is-preloading');
             }
         } catch (error) {
@@ -16,99 +16,9 @@
     })();
 </script>
 <link rel="preload" as="image" href="assets/resource/scapesync_banner.jpg" fetchpriority="high"/>
-<link rel="preload" as="video" href="assets/resource/Scapesync_about_video.mp4" type="video/mp4"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist.css" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
 <link href="assets/scapesync-common.css?v=nav-20260629" rel="stylesheet"/>
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "on-tertiary-fixed-variant": "#005048",
-                        "on-tertiary-fixed": "#00201c",
-                        "on-secondary-fixed": "#23005c",
-                        "error-container": "#93000a",
-                        "inverse-on-surface": "#2a3043",
-                        "error": "#ffb4ab",
-                        "tertiary": "#d3fff6",
-                        "on-secondary-container": "#c4abff",
-                        "on-error-container": "#ffdad6",
-                        "primary-container": "#00f0ff",
-                        "secondary-container": "#571bc1",
-                        "surface-container-lowest": "#070d1f",
-                        "on-primary-fixed-variant": "#004f54",
-                        "surface-dim": "#0c1324",
-                        "secondary": "#d0bcff",
-                        "on-surface": "#dce1fb",
-                        "on-primary": "#00363a",
-                        "surface-container-low": "#151b2d",
-                        "outline-variant": "#3b494b",
-                        "surface-container": "#191f31",
-                        "secondary-fixed-dim": "#d0bcff",
-                        "on-tertiary-container": "#006b60",
-                        "on-secondary-fixed-variant": "#5516be",
-                        "secondary-fixed": "#e9ddff",
-                        "tertiary-fixed-dim": "#4fdbc8",
-                        "on-background": "#dce1fb",
-                        "outline": "#849495",
-                        "on-primary-container": "#006970",
-                        "primary-fixed": "#7df4ff",
-                        "surface-tint": "#00dbe9",
-                        "inverse-primary": "#006970",
-                        "tertiary-fixed": "#71f8e4",
-                        "on-error": "#690005",
-                        "tertiary-container": "#66efdb",
-                        "surface-variant": "#2e3447",
-                        "inverse-surface": "#dce1fb",
-                        "on-surface-variant": "#b9cacb",
-                        "surface-container-high": "#23293c",
-                        "surface": "#0c1324",
-                        "on-secondary": "#3c0091",
-                        "primary-fixed-dim": "#00dbe9",
-                        "background": "#0c1324",
-                        "surface-container-highest": "#2e3447",
-                        "surface-bright": "#33394c",
-                        "on-tertiary": "#003731",
-                        "on-primary-fixed": "#002022",
-                        "primary": "#dbfcff"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0px",
-                        "lg": "0px",
-                        "xl": "0px",
-                        "full": "0px"
-                    },
-                    "spacing": {
-                        "margin-mobile": "20px",
-                        "unit": "4px",
-                        "margin-desktop": "64px",
-                        "gutter": "24px",
-                        "container-max": "1440px"
-                    },
-                    "fontFamily": {
-                        "headline-lg-mobile": ["Geist"],
-                        "headline-xl": ["Geist"],
-                        "headline-lg": ["Geist"],
-                        "data-label": ["JetBrains Mono"],
-                        "data-value": ["JetBrains Mono"],
-                        "body-md": ["JetBrains Mono"]
-                    },
-                    "fontSize": {
-                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "0", "fontWeight": "600"}],
-                        "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "0", "fontWeight": "700"}],
-                        "headline-lg": ["16px", {"lineHeight": "40px", "letterSpacing": "0", "fontWeight": "600"}],
-                        "data-label": ["72px", {"lineHeight": "20px", "letterSpacing": "0", "fontWeight": "500"}],
-                        "data-value": ["12px", {"lineHeight": "16px", "letterSpacing": "0", "fontWeight": "700"}],
-                        "body-md": ["14px", {"lineHeight": "22px", "letterSpacing": "0", "fontWeight": "400"}]
-                    }
-                },
-            },
-        }
-    </script>
 <style>
         html {
             scroll-behavior: smooth;
@@ -130,128 +40,14 @@
             background-size: 32px 32px;
         }
 
-        #ambient-tile-field {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            display: grid;
-            grid-template-columns: repeat(var(--ambient-columns, 40), minmax(0, 1fr));
-            grid-template-rows: repeat(var(--ambient-rows, 24), minmax(0, 1fr));
-            gap: 1px;
-            pointer-events: none;
-            perspective: 1200px;
-            transform-style: preserve-3d;
-            opacity: 0.76;
-            contain: layout paint style;
-        }
+        /* #ambient-tile-field / .ambient-tile rules live in assets/scapesync-common.css */
 
-        #ambient-tile-field::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            z-index: 2;
-            background: linear-gradient(180deg, rgba(12, 19, 36, 0.16), rgba(12, 19, 36, 0.82));
-            pointer-events: none;
-        }
-
-        .ambient-tile {
-            position: relative;
-            z-index: 0;
-            min-width: 0;
-            min-height: 0;
-            background: hsla(var(--tile-hue, 185), 100%, 55%, var(--tile-alpha, 0.026));
-            border: 1px solid hsla(var(--tile-hue, 185), 100%, 82%, var(--tile-border, 0.045));
-            opacity: var(--tile-opacity, 0.54);
-            box-shadow:
-                0 0 calc(var(--tile-glow, 0) * 1px) hsla(var(--tile-hue, 185), 100%, 62%, 0.22),
-                inset 0 0 calc(var(--tile-inner-glow, 0) * 1px) hsla(var(--tile-hue, 185), 100%, 78%, 0.12);
-            transform:
-                translateZ(var(--tile-z, 0px))
-                rotateX(var(--tile-rx, 0deg))
-                rotateY(var(--tile-ry, 0deg));
-            transition:
-                transform 260ms cubic-bezier(0.16, 1, 0.3, 1),
-                background-color 260ms ease,
-                border-color 260ms ease,
-                opacity 260ms ease,
-                box-shadow 260ms ease;
-        }
-
-        .ambient-tile.is-near {
-            border-color: hsla(var(--tile-hue, 185), 100%, 78%, var(--tile-border, 0.28));
-            /* Promote to a GPU layer only while the tile is actually animating (was on every tile). */
-            will-change: transform;
-        }
-
-        .glass-panel,
-        .section-card,
-        .data-card {
+        .section-card {
             background: rgba(15, 23, 42, 0.82);
             -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(219, 252, 255, 0.2);
             border-radius: 0;
-        }
-
-        .glass-panel {
-            opacity: 0;
-            transform: translate3d(0, 34px, -90px) scale(0.92);
-            transition:
-                opacity 0.8s ease,
-                transform 0.95s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .scroll-reveal {
-            --assembly-x: 0px;
-            --assembly-y: 84px;
-            --assembly-z: -120px;
-            --assembly-scale: 0.86;
-            --assembly-rotate: 0deg;
-            opacity: 0;
-            transform:
-                translate3d(var(--assembly-x), var(--assembly-y), var(--assembly-z))
-                scale(var(--assembly-scale))
-                rotateZ(var(--assembly-rotate));
-            transition:
-                opacity 0.82s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 1.12s cubic-bezier(0.16, 1, 0.3, 1),
-                border-color 520ms ease,
-                background-color 520ms ease,
-                box-shadow 520ms ease;
-            will-change: opacity, transform;
-        }
-
-        .scroll-reveal.visible,
-        .mosaic-target.assembled .glass-panel {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-
-        #hero-mosaic-overlay {
-            position: absolute;
-            inset: 0;
-            z-index: 5;
-            display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            grid-template-rows: repeat(10, 1fr);
-            pointer-events: none;
-        }
-
-        .hero-tile {
-            background-color: #0c1324;
-            border: 1px solid rgba(0, 240, 255, 0.05);
-            transform: translateZ(0);
-            transform-origin: center;
-            transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 1.2s ease;
-        }
-
-        .mosaic-target.assembled .hero-tile {
-            transform: translateZ(120px) scale(0.02);
-            opacity: 0;
         }
 
         .sync-section {
@@ -325,8 +121,7 @@
             line-height: 0.98;
         }
 
-        .section-card,
-        .data-card {
+        .section-card {
             position: relative;
             overflow: hidden;
             transition:
@@ -337,18 +132,7 @@
             transform-style: preserve-3d;
         }
 
-        .section-card.scroll-reveal,
-        .data-card.scroll-reveal {
-            transition:
-                opacity 0.82s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 1.12s cubic-bezier(0.16, 1, 0.3, 1),
-                border-color 520ms ease,
-                background-color 520ms ease,
-                box-shadow 520ms ease;
-        }
-
-        .section-card::before,
-        .data-card::before {
+        .section-card::before {
             content: '';
             position: absolute;
             inset: 0;
@@ -359,8 +143,7 @@
             z-index: 1;
         }
 
-        .section-card > *,
-        .data-card > * {
+        .section-card > * {
             position: relative;
             z-index: 2;
         }
@@ -373,123 +156,8 @@
         }
 
         .sync-section:hover .section-card::before,
-        .sync-section.is-hovered .section-card::before,
-        .data-card:hover::before,
-        .data-card.is-hovered::before {
+        .sync-section.is-hovered .section-card::before {
             opacity: 1;
-        }
-
-        .data-card:hover,
-        .data-card.is-hovered {
-            border-color: rgba(113, 248, 228, 0.58);
-            box-shadow: 0 16px 44px rgba(113, 248, 228, 0.1);
-            transform: translateY(-4px);
-        }
-
-        .section-tile-array {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 4px;
-            min-height: 160px;
-            transform-style: preserve-3d;
-        }
-
-        .section-tile {
-            --tile-assemble-x: 0px;
-            --tile-assemble-y: 0px;
-            --tile-assemble-z: -120px;
-            --tile-assemble-rotate: 0deg;
-            min-height: 24px;
-            border: 1px solid rgba(219, 252, 255, 0.14);
-            background: rgba(0, 240, 255, 0.08);
-            opacity: 0;
-            transform:
-                translate3d(var(--tile-assemble-x), var(--tile-assemble-y), var(--tile-assemble-z))
-                scale(0.56)
-                rotateZ(var(--tile-assemble-rotate));
-            transition:
-                transform 880ms cubic-bezier(0.16, 1, 0.3, 1),
-                background-color 540ms ease,
-                border-color 540ms ease,
-                opacity 620ms ease;
-            will-change: opacity, transform;
-        }
-
-        .mosaic-target.assembled .section-tile {
-            opacity: 0.72;
-            transform: translate3d(0, 0, 0) scale(1) rotateZ(0deg);
-        }
-
-        .section-tile:nth-child(3n) {
-            background: rgba(113, 248, 228, 0.11);
-        }
-
-        .section-tile:nth-child(4n) {
-            background: rgba(208, 188, 255, 0.1);
-        }
-
-        .sync-section.assembled:hover .section-tile,
-        .sync-section.assembled.is-hovered .section-tile {
-            border-color: rgba(219, 252, 255, 0.42);
-            opacity: 1;
-            transform:
-                translateZ(var(--tile-depth, 16px))
-                rotateX(var(--tile-rx))
-                rotateY(var(--tile-ry));
-        }
-
-        .data-thumb {
-            position: relative;
-            aspect-ratio: 16 / 10;
-            background: rgba(0, 240, 255, 0.08);
-            border-bottom: 1px solid rgba(219, 252, 255, 0.18);
-            overflow: hidden;
-        }
-
-        .data-thumb::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            z-index: 2;
-            pointer-events: none;
-            opacity: 0;
-            transform: scale(0.78);
-            background:
-                linear-gradient(rgba(219, 252, 255, 0.16) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(219, 252, 255, 0.16) 1px, transparent 1px),
-                radial-gradient(circle at 72% 24%, rgba(0, 240, 255, 0.18), transparent 34%);
-            background-size: 12.5% 20%, 12.5% 20%, 100% 100%;
-            mix-blend-mode: screen;
-            transition:
-                opacity 720ms ease,
-                transform 920ms cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .data-thumb img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transform: scale(1.12);
-            transform-origin: center;
-            filter: saturate(0.72) contrast(1.1) brightness(0.86);
-            mix-blend-mode: luminosity;
-            transition:
-                transform 980ms cubic-bezier(0.16, 1, 0.3, 1);
-            will-change: transform;
-        }
-
-        .data-card.visible .data-thumb::after {
-            opacity: 0.42;
-            transform: scale(1);
-        }
-
-        .data-card.visible .data-thumb img {
-            transform: scale(1);
-        }
-
-        .data-card:hover .data-thumb img,
-        .data-card.is-hovered .data-thumb img {
-            transform: scale(1.04) translateZ(0);
         }
 
         .metric-strip {
@@ -1002,14 +670,6 @@
         }
 
         @media (max-width: 767px) {
-            #ambient-tile-field {
-                gap: 1px;
-            }
-
-            .section-tile-array {
-                min-height: 112px;
-            }
-
             .section-intro {
                 min-height: auto;
             }
@@ -1062,6 +722,9 @@
             border-radius: 0;
         }
     </style>
+<!-- Static Tailwind build captured from the Play CDN output (same rules, no runtime compiler).
+     Kept last in <head> to preserve the CDN's injection order in the cascade. -->
+<link href="assets/tailwind-index.css" rel="stylesheet"/>
 </head>
 <body class="antialiased">
 <div id="ambient-tile-field" aria-hidden="true"></div>
@@ -1172,7 +835,7 @@
 <div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>LANDMARKS</span><span>TRANSFORMED</span></div>
 </div>
 <div class="mosaic-media">
-<img alt="SCAPESYNC design visual field 03" src="assets/resource/Scapesync_design_8.png"/>
+<img alt="SCAPESYNC design visual field 03" src="assets/resource/Scapesync_design_8.jpg"/>
 <div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
@@ -1184,7 +847,7 @@
 <div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>TEXT PHOTO</span><span>PUBLIC ART</span></div>
 </div>
 <div class="mosaic-media">
-<img alt="SCAPESYNC design visual field 04" src="assets/resource/Scapesync_design_7.png"/>
+<img alt="SCAPESYNC design visual field 04" src="assets/resource/Scapesync_design_7.jpg"/>
 <div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
@@ -1225,7 +888,7 @@
 <div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>2-4 SOURCES</span><span>SYNC</span></div>
 </div>
 <div class="mosaic-media">
-<img alt="SCAPESYNC technology visual 01" src="assets/resource/Scapesync_design_5.png"/>
+<img alt="SCAPESYNC technology visual 01" src="assets/resource/Scapesync_design_5.jpg"/>
 <div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
@@ -1237,7 +900,7 @@
 <div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>PHOTOMOSAIC</span><span>SHADERS</span></div>
 </div>
 <div class="mosaic-media">
-<img alt="SCAPESYNC technology visual 02" src="assets/resource/Scapesync_design_3.png"/>
+<img alt="SCAPESYNC technology visual 02" src="assets/resource/Scapesync_design_3.jpg"/>
 <div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
@@ -1249,7 +912,7 @@
 <div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>SCREEN META</span><span>MODULAR</span></div>
 </div>
 <div class="mosaic-media">
-<img alt="SCAPESYNC parametric visual mapping" src="assets/resource/Scapesync_design_4.png"/>
+<img alt="SCAPESYNC parametric visual mapping" src="assets/resource/Scapesync_design_4.jpg"/>
 <div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
@@ -1261,7 +924,7 @@
 <div class="metric-strip font-data-value text-data-value text-primary mt-6"><span>MODULAR</span><span>COHERENT</span></div>
 </div>
 <div class="mosaic-media">
-<img alt="SCAPESYNC replaceable visual modules" src="assets/resource/Scapesync_design_6.png"/>
+<img alt="SCAPESYNC replaceable visual modules" src="assets/resource/Scapesync_design_6.jpg"/>
 <div class="mosaic-pieces" aria-hidden="true"></div>
 </div>
 </article>
@@ -1283,20 +946,20 @@
 <script src="assets/scapesync-ambient.js"></script>
 <script>
     (() => {
-        const preloadSessionKey = 'scapesync-main-assets-ready-v7';
+        const preloadSessionKey = 'scapesync-main-assets-ready-v8';
+        // Weights approximate each asset's byte size so the progress bar advances smoothly.
         const preloadAssets = [
-            { type: 'image', src: 'assets/resource/scapesync_banner.jpg', weight: 3 },
-            { type: 'video', src: 'assets/resource/Scapesync_about_video.mp4', weight: 18 },
+            { type: 'image', src: 'assets/resource/scapesync_banner.jpg', weight: 1 },
+            { type: 'video', src: 'assets/resource/Scapesync_about_video.mp4', weight: 30 },
             { type: 'image', src: 'assets/resource/Scapesync_design_2.jpeg', weight: 1 },
-            { type: 'image', src: 'assets/resource/Scapesync_design_3.png', weight: 1 },
-            { type: 'image', src: 'assets/resource/Scapesync_design_4.png', weight: 1 },
-            { type: 'image', src: 'assets/resource/Scapesync_design_5.png', weight: 1 },
-            { type: 'image', src: 'assets/resource/Scapesync_design_6.png', weight: 1 },
-            { type: 'image', src: 'assets/resource/Scapesync_design_7.png', weight: 1 },
-            { type: 'image', src: 'assets/resource/Scapesync_design_8.png', weight: 1 },
-            { type: 'image', src: 'assets/resource/scapesync_technology_2.jpg', weight: 3 },
-            { type: 'image', src: 'assets/resource/scapesync_technology_3.jpg', weight: 3 },
-            { type: 'image', src: 'assets/resource/scapesync_technology_4.jpg', weight: 3 }
+            { type: 'image', src: 'assets/resource/Scapesync_design_3.jpg', weight: 1 },
+            { type: 'image', src: 'assets/resource/Scapesync_design_4.jpg', weight: 1 },
+            { type: 'image', src: 'assets/resource/Scapesync_design_5.jpg', weight: 1 },
+            { type: 'image', src: 'assets/resource/Scapesync_design_6.jpg', weight: 1 },
+            { type: 'image', src: 'assets/resource/Scapesync_design_7.jpg', weight: 1 },
+            { type: 'image', src: 'assets/resource/Scapesync_design_8.jpg', weight: 1 },
+            { type: 'image', src: 'assets/resource/scapesync_technology_3.jpg', weight: 1 },
+            { type: 'image', src: 'assets/resource/scapesync_technology_4.jpg', weight: 1 }
         ];
 
         const doc = document.documentElement;
@@ -1669,18 +1332,12 @@
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const reducedMotion = false;
-
         // Cached layout values — refreshed only on resize via measure(), never per scroll frame.
         let viewportHeight = window.innerHeight || 1;
         let navHeightCached = 80;
 
-        // (Removed dead #hero-mosaic-overlay and [data-tile-array] builders — neither
-        // element exists in the markup, so these loops created zero nodes.)
-
-        document.querySelectorAll('.section-card, .data-card').forEach((card) => {
+        document.querySelectorAll('.section-card').forEach((card) => {
             card.addEventListener('mousemove', (event) => {
-                if (reducedMotion) return;
                 card.classList.add('is-hovered');
                 const rect = card.getBoundingClientRect();
                 card.style.setProperty('--card-x', `${event.clientX - rect.left}px`);
@@ -1694,7 +1351,6 @@
 
         document.querySelectorAll('.sync-section').forEach((section) => {
             section.addEventListener('mousemove', (event) => {
-                if (reducedMotion) return;
                 section.classList.add('is-hovered');
                 const rect = section.getBoundingClientRect();
                 const x = (event.clientX - rect.left) / rect.width - 0.5;
@@ -1711,23 +1367,6 @@
                 section.style.setProperty('--section-ry', '0deg');
                 section.style.setProperty('--tile-rx', '0deg');
                 section.style.setProperty('--tile-ry', '0deg');
-            });
-        });
-
-        document.querySelectorAll('.sync-section.mosaic-target').forEach((section) => {
-            section.querySelectorAll('.scroll-reveal').forEach((element, index) => {
-                const isSectionCard = element.classList.contains('section-card');
-                const direction = isSectionCard ? -1 : 1;
-                const distance = isSectionCard ? 150 : 220;
-                const lift = isSectionCard ? 62 : 110 + index * 18;
-                const delay = isSectionCard ? 80 : 170 + index * 130;
-
-                element.style.setProperty('--assembly-x', `${direction * distance}px`);
-                element.style.setProperty('--assembly-y', `${lift}px`);
-                element.style.setProperty('--assembly-z', `${isSectionCard ? -180 : -250}px`);
-                element.style.setProperty('--assembly-scale', isSectionCard ? '0.84' : '0.78');
-                element.style.setProperty('--assembly-rotate', `${direction * (isSectionCard ? 2.4 : 4.8)}deg`);
-                element.style.transitionDelay = `${delay}ms`;
             });
         });
 
@@ -1909,22 +1548,6 @@
             });
         };
 
-        const placeReducedMosaicPieces = (pieces, visible) => {
-            const opacityValue = visible ? '1' : '0';
-            const transformValue = 'translate3d(0, 0, 0) scale(1) rotateZ(0deg)';
-
-            pieces.forEach((piece) => {
-                if (piece._mosaicOpacity !== opacityValue) {
-                    piece.style.opacity = opacityValue;
-                    piece._mosaicOpacity = opacityValue;
-                }
-                if (piece._mosaicTransform !== transformValue) {
-                    piece.style.transform = transformValue;
-                    piece._mosaicTransform = transformValue;
-                }
-            });
-        };
-
         const updateMosaicStories = () => {
             // Pass 1 — read layout only (no interleaved writes → avoids forced reflow between stories).
             const frames = mosaicState.map((state) => {
@@ -1998,30 +1621,6 @@
                         state.wcByCard[index] = wantWillChange;
                     }
 
-                    if (reducedMotion) {
-                        card.classList.toggle('is-current', isActive);
-                        card.style.opacity = isActive ? '1' : '0';
-                        card.style.visibility = isActive ? 'visible' : 'hidden';
-                        card.style.pointerEvents = isActive ? 'auto' : 'none';
-                        card.style.zIndex = isActive ? '80' : '70';
-                        card.style.transform = 'translate3d(0, 0, 0)';
-
-                        if (media) {
-                            media.style.setProperty('--image-opacity', isActive ? '0.32' : '0');
-                            media.style.setProperty('--image-scale', '1');
-                        }
-
-                        if (copy) {
-                            copy.style.setProperty('--copy-solid', isActive ? '1' : '0');
-                            copy.style.setProperty('--copy-x', '0px');
-                            copy.style.setProperty('--copy-grain', '0');
-                            copy.style.setProperty('--copy-grain-x', '0px');
-                        }
-
-                        placeReducedMosaicPieces(pieces, isActive);
-                        return;
-                    }
-
                     const opacity = 1 - clamp((abs - 0.34) / 0.72, 0, 1);
                     const exit = delta < 0 ? clamp(-delta, 0, 1.35) : 0;
                     const incoming = delta > 0 ? clamp(delta, 0, 1.2) : 0;
@@ -2084,34 +1683,6 @@
 
         measure();
         runFrame();
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (!entry.isIntersecting) return;
-
-                entry.target.classList.add('assembled');
-                if (entry.target.classList.contains('scroll-reveal')) {
-                    entry.target.classList.add('visible');
-                }
-
-                entry.target.querySelectorAll('.scroll-reveal').forEach((element) => {
-                    element.classList.add('visible');
-                });
-            });
-        }, { threshold: 0.22, rootMargin: '0px 0px -12% 0px' });
-
-        document.querySelectorAll('.mosaic-target, .scroll-reveal').forEach((element) => {
-            observer.observe(element);
-        });
-
-        window.setTimeout(() => {
-            const hero = document.querySelector('.mosaic-target');
-            if (!hero) return;
-            hero.classList.add('assembled');
-            hero.querySelectorAll('.scroll-reveal, .glass-panel').forEach((element) => {
-                element.classList.add('visible');
-            });
-        }, 100);
     });
 </script>
 </body>

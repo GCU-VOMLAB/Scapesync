@@ -16,7 +16,6 @@
     var mouseX = -9999;
     var mouseY = -9999;
     var ambientFrame = null;
-    var reducedMotion = false;
 
     function clamp(value, min, max) {
       return Math.min(max, Math.max(min, value));
@@ -71,10 +70,6 @@
 
     function updateAmbientTiles() {
       ambientFrame = null;
-      if (reducedMotion) {
-        resetAmbientTiles();
-        return;
-      }
 
       // Reset only the tiles lit last frame; they are re-lit below if still in range.
       for (var i = 0; i < affectedTiles.length; i += 1) {
@@ -131,7 +126,6 @@
     }
 
     function queueAmbientUpdate() {
-      if (reducedMotion) return;
       if (!ambientFrame) {
         ambientFrame = window.requestAnimationFrame(updateAmbientTiles);
       }
@@ -142,7 +136,6 @@
     // Single pointer listener (covers mouse, pen and touch). Previously a separate
     // 'mousemove' listener ran identical work, doubling handler cost on every mouse move.
     window.addEventListener("pointermove", function (event) {
-      if (reducedMotion) return;
       mouseX = event.clientX;
       mouseY = event.clientY;
       queueAmbientUpdate();
