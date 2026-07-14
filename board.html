@@ -238,6 +238,7 @@
 <footer class="sc-footer">
   <div class="sc-footer-inner">
     <strong class="sc-footer-brand">SCAPESYNC</strong>
+    <div class="sc-footer-ack"><div class="sc-footer-ack-row"><span>Supported by IITP &middot; COMPA &middot; Gyeonggi RISE Center</span><a href="https://scapesync.p-e.kr/board.html#acknowledgements">Acknowledgements &rarr;</a></div></div>
     <span>&copy; 2026 SCAPESYNC.</span>
   </div>
 </footer>
@@ -364,8 +365,9 @@
 
     list.innerHTML = visible.map(function (post) {
       var cat = post.cat.toLowerCase();
+      var slug = String(post.slug || "").trim().replace(/[^a-z0-9_-]/gi, "-");
       return [
-        '<article class="board-card" data-cat="' + escapeHTML(cat) + '">',
+        '<article class="board-card" data-cat="' + escapeHTML(cat) + '"' + (slug ? ' id="' + escapeHTML(slug) + '"' : "") + ">",
         '<div class="board-date">' + escapeHTML(post.date) + "</div>",
         '<div class="board-main">',
         "<h2>" + escapeHTML(post.title) + "</h2>",
@@ -376,6 +378,17 @@
         "</article>"
       ].join("");
     }).join("");
+    openHashPost();
+  }
+
+  function openHashPost() {
+    var id = window.location.hash.slice(1);
+    if (!id) return;
+    var post = document.getElementById(id);
+    if (!post) return;
+    window.requestAnimationFrame(function () {
+      post.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
   }
 
   buttons.forEach(function (button) {
@@ -387,6 +400,8 @@
       render();
     });
   });
+
+  window.addEventListener("hashchange", openHashPost);
 
   fetch(CSV_FILE, { cache: "no-store" })
     .then(function (response) {

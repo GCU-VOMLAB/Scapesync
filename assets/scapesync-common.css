@@ -155,6 +155,30 @@
   font-size: 22px;
 }
 
+.sc-footer-ack {
+  font-size: clamp(7px, 1.8vw, 11px);
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: none;
+}
+
+.sc-footer-ack-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  white-space: nowrap;
+}
+
+.sc-footer-ack a {
+  color: #71f8e4;
+  transition: color 0.2s ease;
+}
+
+.sc-footer-ack a:hover {
+  color: #dbfcff;
+}
+
 @media (max-width: 760px) {
   #ambient-tile-field {
     gap: 1px;
