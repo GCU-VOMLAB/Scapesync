@@ -313,6 +313,15 @@
     });
   }
 
+  // Tolerate ANSI/CP949 and UTF-16 saves from Excel/Notepad (plain .text() assumes UTF-8).
+  function decodeCSVBuffer(buffer) {
+    var bytes = new Uint8Array(buffer);
+    if (bytes.length >= 2 && bytes[0] === 0xFF && bytes[1] === 0xFE) return new TextDecoder("utf-16le").decode(buffer);
+    if (bytes.length >= 2 && bytes[0] === 0xFE && bytes[1] === 0xFF) return new TextDecoder("utf-16be").decode(buffer);
+    try { return new TextDecoder("utf-8", { fatal: true }).decode(buffer); }
+    catch (error) { return new TextDecoder("euc-kr").decode(buffer); }
+  }
+
   function formatBody(value) {
     return escapeHTML(value).replace(/\n/g, "<br>");
   }
@@ -488,8 +497,9 @@
   fetch(CSV_FILE, { cache: "no-store" })
     .then(function (response) {
       if (!response.ok) throw new Error("CSV not found");
-      return response.text();
+      return response.arrayBuffer();
     })
+    .then(decodeCSVBuffer)
     .then(function (text) {
       posts = parseCSV(text);
       if (!posts.length) {

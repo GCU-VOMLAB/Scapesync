@@ -202,6 +202,13 @@
     letter-spacing: .08em;
     text-transform: uppercase;
   }
+  .partner-position {
+    margin-top: 6px;
+    color: rgba(0, 240, 255, .78);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
   .partner-message {
     color: rgba(219, 252, 255, .64);
     font-size: 12px;
@@ -416,6 +423,16 @@
     });
   }
 
+  // The CSV is edited by hand (often in Excel), which saves ANSI/CP949 or UTF-16 by
+  // default — plain response.text() assumes UTF-8 and turns Korean into U+FFFD.
+  function decodeCSVBuffer(buffer) {
+    var bytes = new Uint8Array(buffer);
+    if (bytes.length >= 2 && bytes[0] === 0xFF && bytes[1] === 0xFE) return new TextDecoder("utf-16le").decode(buffer);
+    if (bytes.length >= 2 && bytes[0] === 0xFE && bytes[1] === 0xFF) return new TextDecoder("utf-16be").decode(buffer);
+    try { return new TextDecoder("utf-8", { fatal: true }).decode(buffer); }
+    catch (error) { return new TextDecoder("euc-kr").decode(buffer); }
+  }
+
   function parseCSVRows(text) {
     text = String(text || "").replace(/^\uFEFF/, "").replace(/\u0000/g, "");
     var rows = [];
@@ -488,12 +505,13 @@
       return {
         group: groupKey(item.group || item.affiliation || item.type),
         name: item.name_ko || item.name || item.name_en || "",
-        role: item.name_en || item.role || "",
+        en: item.name_en || "",
+        role: item.role || item.title || item.position || "",
         image: item.image || item.img || item.path || DEFAULT_PROFILE_IMAGE,
         location: parseLocation(item.location)
       };
     }).filter(function(item) {
-      return item.name || item.role;
+      return item.name || item.en;
     });
   }
 
@@ -512,8 +530,9 @@
     return fetch(url + (url.indexOf("?") === -1 ? "?v=" : "&v=") + Date.now(), { cache: "no-store" })
       .then(function(response) {
         if (!response.ok) throw new Error("Partner CSV request failed");
-        return response.text();
+        return response.arrayBuffer();
       })
+      .then(decodeCSVBuffer)
       .then(parsePartnersCSV)
       .then(function(items) {
         if (!items.length) throw new Error("Partner CSV loaded but empty.");
@@ -531,7 +550,8 @@
       '<div class="partner-photo"><img data-partner-image src="' + escapeHTML(item.image) + '" alt="' + escapeHTML(item.name || item.role) + '" loading="lazy"></div>',
       '<div class="partner-info">',
       '<div class="partner-name">' + escapeHTML(item.name) + '</div>',
-      '<div class="partner-role">' + escapeHTML(item.role) + '</div>',
+      (item.en ? '<div class="partner-role">' + escapeHTML(item.en) + '</div>' : ''),
+      (item.role ? '<div class="partner-position">' + escapeHTML(item.role) + '</div>' : ''),
       '</div>',
       '</article>'
     ].join("");
